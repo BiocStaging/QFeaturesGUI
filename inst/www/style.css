@@ -300,6 +300,24 @@ body {
   border-top-color: #3c8dbc !important;
 }
 
+.qfeatures-doc-menu > .qfeatures-doc-button {
+  align-items: center;
+  display: flex;
+  height: 50px;
+  justify-content: center;
+  min-width: 50px;
+  padding: 0 15px;
+}
+
+.qfeatures-doc-menu > .qfeatures-doc-button:hover,
+.qfeatures-doc-menu > .qfeatures-doc-button:focus {
+  background: rgba(0,0,0,0.08);
+}
+
+.qfeatures-doc-button-icon {
+  font-size: 18px;
+}
+
 .workflow-doc-header {
   margin-top: 18px;
   margin-bottom: 8px;
