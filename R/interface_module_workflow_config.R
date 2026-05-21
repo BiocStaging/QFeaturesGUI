@@ -58,7 +58,7 @@ interface_module_workflow_config_tab <- function(id, initial_steps) {
                     tags$hr(),
                     doc_section_header(
                         "Sample Filtering",
-                        "https://uclouvain-cbio.github.io/QFeaturesGUI/articles/processQFeatures.html#samplefeature-filtering"
+                        "https://rformassspectrometry.github.io/QFeaturesGUI/articles/processQFeatures.html#samplefeature-filtering"
                     ),
                     tags$p(
                         "Filter your QFeatures object using sample-level metadata",
@@ -71,7 +71,7 @@ interface_module_workflow_config_tab <- function(id, initial_steps) {
                     ),
                     doc_section_header(
                         "Feature Filtering",
-                        "https://uclouvain-cbio.github.io/QFeaturesGUI/articles/processQFeatures.html#samplefeature-filtering"
+                        "https://rformassspectrometry.github.io/QFeaturesGUI/articles/processQFeatures.html#samplefeature-filtering"
                     ),
                     tags$p(
                         "Filter your QFeatures object using feature-level metadata",
@@ -84,7 +84,7 @@ interface_module_workflow_config_tab <- function(id, initial_steps) {
                     ),
                     doc_section_header(
                         "Normalisation",
-                        "https://uclouvain-cbio.github.io/QFeaturesGUI/articles/processQFeatures.html#normalisation"
+                        "https://rformassspectrometry.github.io/QFeaturesGUI/articles/processQFeatures.html#normalisation"
                     ),
                     tags$p(
                         "Apply one of several normalisation methods to the selected",
@@ -96,7 +96,7 @@ interface_module_workflow_config_tab <- function(id, initial_steps) {
                     ),
                     doc_section_header(
                         "Zero to NA",
-                        "https://uclouvain-cbio.github.io/QFeaturesGUI/articles/processQFeatures.html#zero-to-na"
+                        "https://rformassspectrometry.github.io/QFeaturesGUI/articles/processQFeatures.html#zero-to-na"
                     ),
                     tags$p(
                         "Replace all zero intensity values with NA across the",
@@ -104,7 +104,7 @@ interface_module_workflow_config_tab <- function(id, initial_steps) {
                     ),
                     doc_section_header(
                         "Log Transform",
-                        "https://uclouvain-cbio.github.io/QFeaturesGUI/articles/processQFeatures.html#log-transformation"
+                        "https://rformassspectrometry.github.io/QFeaturesGUI/articles/processQFeatures.html#log-transformation"
                     ),
                     tags$p(
                         "Apply a logarithmic transformation with configurable",
@@ -112,7 +112,7 @@ interface_module_workflow_config_tab <- function(id, initial_steps) {
                     ),
                     doc_section_header(
                         "Imputation",
-                        "https://uclouvain-cbio.github.io/QFeaturesGUI/articles/processQFeatures.html#imputation"
+                        "https://rformassspectrometry.github.io/QFeaturesGUI/articles/processQFeatures.html#imputation"
                     ),
                     tags$p(
                         "Impute missing values with one of the available methods",
@@ -120,7 +120,7 @@ interface_module_workflow_config_tab <- function(id, initial_steps) {
                     ),
                     doc_section_header(
                         "Filtering Missing Values by Samples",
-                        "https://uclouvain-cbio.github.io/QFeaturesGUI/articles/processQFeatures.html#filtering-missing-values-by-samplesfeatures"
+                        "https://rformassspectrometry.github.io/QFeaturesGUI/articles/processQFeatures.html#filtering-missing-values-by-samplesfeatures"
                     ),
                     tags$p(
                         "Define a missing-value threshold and remove samples that",
@@ -132,7 +132,7 @@ interface_module_workflow_config_tab <- function(id, initial_steps) {
                     ),
                     doc_section_header(
                         "Filtering Missing Values by Features",
-                        "https://uclouvain-cbio.github.io/QFeaturesGUI/articles/processQFeatures.html#filtering-missing-values-by-samplesfeatures"
+                        "https://rformassspectrometry.github.io/QFeaturesGUI/articles/processQFeatures.html#filtering-missing-values-by-samplesfeatures"
                     ),
                     tags$p(
                         "This step follows the same logic as sample-level missing",
@@ -140,7 +140,7 @@ interface_module_workflow_config_tab <- function(id, initial_steps) {
                     ),
                     doc_section_header(
                         "Aggregation",
-                        "https://uclouvain-cbio.github.io/QFeaturesGUI/articles/processQFeatures.html#aggregation"
+                        "https://rformassspectrometry.github.io/QFeaturesGUI/articles/processQFeatures.html#aggregation"
                     ),
                     tags$p(
                         "Aggregate lower-level features to a higher level.",
@@ -149,7 +149,7 @@ interface_module_workflow_config_tab <- function(id, initial_steps) {
                     ),
                     doc_section_header(
                         "Join",
-                        "https://uclouvain-cbio.github.io/QFeaturesGUI/articles/processQFeatures.html#join"
+                        "https://rformassspectrometry.github.io/QFeaturesGUI/articles/processQFeatures.html#join"
                     ),
                     tags$p(
                         "Join multiple sets into a single set for downstream",
