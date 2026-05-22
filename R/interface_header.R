@@ -16,7 +16,7 @@ header <- function(title) {
         bs3Tooltip(
             trigger = tags$a(
                 class = "qfeatures-doc-button",
-                href = "https://uclouvain-cbio.github.io/QFeaturesGUI/",
+                href = "https://rformassspectrometry.github.io/QFeaturesGUI/",
                 target = "_blank",
                 rel = "noopener noreferrer",
                 `aria-label` = "Open the online documentation in a new page",

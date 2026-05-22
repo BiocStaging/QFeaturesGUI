@@ -1,4 +1,4 @@
-url: https://uclouvain-cbio.github.io/QFeaturesGUI/
+url: https://rformassspectrometry.github.io/QFeaturesGUI/
 
 template:
   bootstrap: 5
@@ -50,7 +50,6 @@ news:
 
 repo:
   url:
-    home: https://github.com/UCLouvain-CBIO/QFeaturesGUI
-    source: https://github.com/UCLouvain-CBIO/QFeaturesGUI
-    issue: https://github.com/UCLouvain-CBIO/QFeaturesGUI/issues
-
+    home: https://github.com/rformassspectrometry/QFeaturesGUI
+    source: https://github.com/rformassspectrometry/QFeaturesGUI
+    issue: https://github.com/rformassspectrometry/QFeaturesGUI/issues

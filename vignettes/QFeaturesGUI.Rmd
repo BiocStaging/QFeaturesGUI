@@ -118,7 +118,7 @@ if (!require("remotes", quietly = TRUE)) {
     install.packages("remotes")
 }
 # Install the package
-remotes::install_github("UCLouvain-CBIO/QFeaturesGUI")
+remotes::install_github("rformassspectrometry/QFeaturesGUI")
 # Load the package
 library(QFeaturesGUI)
 ```
