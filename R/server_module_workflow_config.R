@@ -63,11 +63,10 @@ server_module_workflow_config <- function(id) {
         })
 
         observeEvent(input$confirm_reset, {
-            # Strip .qf$qfeatures back to the initial state: keep original
-            # assays (no suffix) and the initial sets (#0), remove all step
-            # outputs (#1, #2, ...).
-            keep <- !grepl("_\\(QFeaturesGUI#[1-9][0-9]*\\)", names(.qf$qfeatures))
-            .qf$qfeatures <- .qf$qfeatures[, , keep]
+            # Strip .qf$qfeatures and generated code back to the initial
+            # state: keep original assays and the initial sets (#0), remove
+            # all step outputs/code (#1, #2, ...).
+            invalidate_steps_from(1L)
 
             # Reset every step reactiveVal so downstream modules and the
             # sidebar return to their initial (unsaved) state
