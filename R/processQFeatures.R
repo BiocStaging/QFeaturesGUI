@@ -36,6 +36,9 @@
 #' @importFrom shiny shinyApp runApp addResourcePath
 #'
 #' @examples
+#' 
+#' # the example should be launched with `ask = FALSE`
+#'
 #' library(QFeatures)
 #' library(QFeaturesGUI)
 #'
