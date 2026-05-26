@@ -15,24 +15,36 @@
 
 server_dynamic_workflow <- function(input, output, session) {
     version_counter <- local(0L)
+    previous_n_steps <- local(0L)
 
     observe({
         version_counter <<- version_counter + 1L
         v <- version_counter
+        workflow_config <- global_rv$workflow_config
+        n_steps <- length(workflow_config)
+
+        if (previous_n_steps > n_steps) {
+            for (i in seq.int(n_steps + 1L, previous_n_steps)) {
+                output[[paste0("dynamic_step_ui_", i)]] <- renderUI(NULL)
+            }
+        }
+        previous_n_steps <<- n_steps
 
         step_rvs <- lapply(
-            seq_along(global_rv$workflow_config),
+            seq_along(workflow_config),
             function(i) reactiveVal(0)
         )
         global_rv$step_rvs <- step_rvs
 
-        lapply(seq_along(global_rv$workflow_config), function(i) {
+        lapply(seq_along(workflow_config), function(i) {
+            step_name <- workflow_config[[i]]
+            parent_step_name <- if (i == 1) NULL else workflow_config[[i - 1]]
             parent_rv <- if (i == 1) NULL else step_rvs[[i - 1]]
 
             # Versioned module IDs ensure each reset creates a fresh namespace.
             # Old module instances survive but write to orphaned IDs no longer
             # present in the UI, so their stale state is completely harmless.
-            module_id <- switch(global_rv$workflow_config[[i]],
+            module_id <- switch(step_name,
                 "Sample Filtering"          = paste0("sampleFiltering_", i, "_v", v),
                 "Feature Filtering"         = paste0("featureFiltering_", i, "_v", v),
                 "Normalisation"             = paste0("normalisation_", i, "_v", v),
@@ -58,13 +70,13 @@ server_dynamic_workflow <- function(input, output, session) {
                             style = "font-size: 1.1em; color: #777;",
                             paste0(
                                 "Please save Step ", i - 1,
-                                " \u2014 ", global_rv$workflow_config[[i - 1]],
+                                " \u2014 ", parent_step_name,
                                 " \u2014 before proceeding to this step."
                             )
                         )
                     )
                 } else {
-                    switch(global_rv$workflow_config[[i]],
+                    switch(step_name,
                         "Sample Filtering"          = interface_module_filtering_tab(module_id, type = "samples"),
                         "Feature Filtering"         = interface_module_filtering_tab(module_id, type = "features"),
                         "Normalisation"             = interface_module_normalisation_tab(module_id),
@@ -84,7 +96,7 @@ server_dynamic_workflow <- function(input, output, session) {
             outputOptions(output, paste0("dynamic_step_ui_", i), suspendWhenHidden = FALSE)
 
             # Call the corresponding server module
-            switch(global_rv$workflow_config[[i]],
+            switch(step_name,
                 "Sample Filtering"          = server_module_filtering_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv, type = "samples"),
                 "Feature Filtering"         = server_module_filtering_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv, type = "features"),
                 "Normalisation"             = server_module_normalisation_tab(module_id, step_number = i, step_rv = step_rvs[[i]], parent_rv = parent_rv),

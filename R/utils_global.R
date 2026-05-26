@@ -670,6 +670,126 @@ qfeatures_to_df <- function(qfeatures) {
 remove_QFeaturesGUI <- function(string) {
     return(gsub("_\\(QFeaturesGUI#[0-9]+\\)", "", string))
 }
+
+#' Extract QFeaturesGUI workflow step numbers from set names
+#'
+#' @param string Character vector of set names.
+#'
+#' @return Integer vector with the extracted step number, or `NA_integer_`
+#'   when a name has no QFeaturesGUI step suffix.
+#' @rdname INTERNAL_qfeaturesgui_step_number
+#' @keywords internal
+#'
+qfeaturesgui_step_number <- function(string) {
+    matches <- regexec("_\\(QFeaturesGUI#([0-9]+)\\)", string)
+    parts <- regmatches(string, matches)
+
+    vapply(parts, function(hit) {
+        if (length(hit) == 2L) {
+            return(as.integer(hit[[2]]))
+        }
+        NA_integer_
+    }, integer(1))
+}
+
+#' Get saved downstream workflow steps
+#'
+#' @param step_number Integer workflow step where invalidation starts.
+#'
+#' @return Integer vector of downstream saved step numbers.
+#' @rdname INTERNAL_saved_downstream_steps
+#' @keywords internal
+#'
+saved_downstream_steps <- function(step_number) {
+    if (is.null(global_rv$step_rvs) ||
+        length(global_rv$step_rvs) <= step_number) {
+        return(integer(0))
+    }
+
+    downstream <- seq.int(step_number + 1L, length(global_rv$step_rvs))
+    downstream[vapply(downstream, function(i) {
+        global_rv$step_rvs[[i]]() > 0L
+    }, logical(1))]
+}
+
+#' Build downstream invalidation message
+#'
+#' @param downstream_steps Integer vector of downstream saved step numbers.
+#'
+#' @return Character message for confirmation modals. Empty string when no
+#'   downstream saved steps were invalidated.
+#' @rdname INTERNAL_downstream_invalidation_message
+#' @keywords internal
+#'
+downstream_invalidation_message <- function(downstream_steps) {
+    if (length(downstream_steps) == 0L) {
+        return("")
+    }
+
+    paste0(
+        "This save invalidated ",
+        length(downstream_steps),
+        " downstream saved step",
+        if (length(downstream_steps) != 1L) "s" else "",
+        ". Re-run ",
+        if (length(downstream_steps) != 1L) "these steps" else "this step",
+        " before downloading final results."
+    )
+}
+
+#' Invalidate saved workflow outputs from a step onward
+#'
+#' @param step_number Integer workflow step where invalidation starts.
+#'
+#' @return Invisibly returns the downstream saved step numbers that were
+#'   invalidated. Called for side effects on `.qf$qfeatures`,
+#'   `global_rv$code_lines`, and downstream `global_rv$step_rvs`.
+#' @rdname INTERNAL_invalidate_steps_from
+#' @keywords internal
+#'
+invalidate_steps_from <- function(step_number) {
+    step_number <- as.integer(step_number)
+    if (length(step_number) != 1L || is.na(step_number) || step_number < 1L) {
+        stop("`step_number` must be a positive integer.", call. = FALSE)
+    }
+
+    downstream_steps <- saved_downstream_steps(step_number)
+
+    if (!is.null(.qf$qfeatures)) {
+        assay_steps <- qfeaturesgui_step_number(names(.qf$qfeatures))
+        keep_assays <- is.na(assay_steps) | assay_steps < step_number
+        .qf$qfeatures <- suppressMessages(suppressWarnings(
+            .qf$qfeatures[, , keep_assays]
+        ))
+    }
+
+    if (!is.null(global_rv$code_lines) && length(global_rv$code_lines) > 0L) {
+        code_names <- names(global_rv$code_lines)
+        code_steps <- rep(NA_integer_, length(global_rv$code_lines))
+
+        if (!is.null(code_names)) {
+            has_step_suffix <- grepl("_[0-9]+$", code_names)
+            code_steps[has_step_suffix] <- as.integer(sub(
+                ".*_([0-9]+)$",
+                "\\1",
+                code_names[has_step_suffix]
+            ))
+        }
+
+        keep_code <- is.na(code_steps) | code_steps < step_number
+        global_rv$code_lines <- global_rv$code_lines[keep_code]
+    }
+
+    if (!is.null(global_rv$step_rvs) &&
+        length(global_rv$step_rvs) > step_number) {
+        for (i in seq.int(step_number + 1L, length(global_rv$step_rvs))) {
+            global_rv$step_rvs[[i]](0L)
+        }
+    }
+
+    invisible(downstream_steps)
+}
+
 #' PCA Methods Wrapper
 #'
 #' This function performs Principal Component Analysis (PCA) on a SingleCellExperiment object using the specified method.
@@ -845,6 +965,8 @@ is_empty_set <- function(assay_object) {
 #' @importFrom QFeatures addAssayLink
 #' @importFrom shinyalert shinyalert
 add_assays_to_global_rv <- function(processed_qfeatures, step_number, type, varFrom = NULL, varTo = NULL) {
+    invalidated_downstream_steps <- invalidate_steps_from(step_number)
+
     n_added <- 0L
     n_skipped_empty <- 0L
     for (name in names(processed_qfeatures)) {
@@ -891,6 +1013,12 @@ add_assays_to_global_rv <- function(processed_qfeatures, step_number, type, varF
         if (n_skipped_empty != 1L) "s were" else " was",
         " skipped."
       )
+    }
+    invalidation_message <- downstream_invalidation_message(
+        invalidated_downstream_steps
+    )
+    if (nzchar(invalidation_message)) {
+        alert_text <- paste(alert_text, invalidation_message, sep = "\n\n")
     }
     shinyalert(
         title = "Step saved",
@@ -1691,6 +1819,8 @@ join_qfeatures <- function(qfeatures, fcol, fcol2 = NULL) {
 #' @importFrom shinyalert shinyalert
 #'
 add_joined_assay_to_global_rv <- function(processed_qfeatures, step_number, featuresType, type) {
+  invalidated_downstream_steps <- invalidate_steps_from(step_number)
+
   name <- names(processed_qfeatures)[length(processed_qfeatures)]
   new_name <- paste0(featuresType, "_",
     strsplit(name,"_QFeaturesGUI#",fixed =TRUE)[[1]][[1]],
@@ -1707,9 +1837,16 @@ add_joined_assay_to_global_rv <- function(processed_qfeatures, step_number, feat
   )
   
   n <- length(processed_qfeatures)
+  alert_text <- "1 set added to QFeatures."
+  invalidation_message <- downstream_invalidation_message(
+    invalidated_downstream_steps
+  )
+  if (nzchar(invalidation_message)) {
+    alert_text <- paste(alert_text, invalidation_message, sep = "\n\n")
+  }
   shinyalert(
     title = "Step saved",
-    text = "1 set added to QFeatures.",
+    text = alert_text,
     type = "success", 
     confirmButtonCol = "#3c8dbc",
     closeOnClickOutside = TRUE

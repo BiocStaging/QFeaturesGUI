@@ -44,6 +44,9 @@ normalization, and transformation. The configured workflow can then be
 applied to the selected assays.
 }
 \examples{
+
+# the example should be launched with `ask = FALSE`
+
 library(QFeatures)
 library(QFeaturesGUI)
 
