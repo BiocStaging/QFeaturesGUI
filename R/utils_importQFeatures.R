@@ -25,10 +25,19 @@ log_transform_existing_sets <- function(object, i = seq_along(object), base = 2,
             )
         }
     } else if (is.numeric(i)) {
-        set_names <- all_set_names[i]
-        if (anyNA(set_names)) {
+        if (anyNA(i)) {
+            stop("`i` contains NA values.", call. = FALSE)
+        }
+        if (any(!is.finite(i))) {
+            stop("`i` contains non-finite QFeatures set indices.", call. = FALSE)
+        }
+        if (any(i != floor(i))) {
+            stop("`i` must contain whole-number QFeatures set indices.", call. = FALSE)
+        }
+        if (any(i < 1L | i > length(all_set_names))) {
             stop("`i` contains out-of-bounds QFeatures set indices.", call. = FALSE)
         }
+        set_names <- all_set_names[as.integer(i)]
     } else if (is.logical(i)) {
         if (length(i) != length(all_set_names)) {
             stop(

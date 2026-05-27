@@ -78,12 +78,10 @@ error_handler <- function(func, component_name, ...) {
 #' @importFrom htmltools HTML div
 #'
 #' @rdname INTERNAL_show_exception_notification
-show_exception_notification <- function(
-      component_name,
-      type = c("error", "warning"),
-      time,
-      duration = 30
-) {
+show_exception_notification <- function(component_name,
+    type = c("error", "warning"),
+    time,
+    duration = 30) {
     type <- match.arg(type)
 
     title <- paste0(
@@ -205,12 +203,10 @@ loading <- function(msg) {
 #' @return A UI element wrapped with waiter behavior.
 #' @rdname INTERNAL_with_output_waiter
 #' @keywords internal
-with_output_waiter <- function(
-      element,
-      html = waiter::spin_fading_circles(),
-      color = "rgba(0, 0, 0, 0.25)",
-      image = ""
-) {
+with_output_waiter <- function(element,
+    html = waiter::spin_fading_circles(),
+    color = "rgba(0, 0, 0, 0.25)",
+    image = "") {
     output_id <- element$attribs$id
     if (is.null(output_id) && is.list(element) && length(element) > 0L) {
         first_child <- element[[1]]
@@ -488,54 +484,54 @@ page_assays_subset <- function(qfeatures, pattern) {
 #'
 #' @rdname INTERNAL_bs3Tooltip
 #' @keywords internal
-#' 
+#'
 bs3Tooltip <- function(trigger,
-                       tooltipText,
-                       placement = c("right", "left", "top", "bottom"),
-                       icon = "fa-info-circle") {
-  stopifnot(
-    is.character(tooltipText), length(tooltipText) == 1L,
-    is.character(icon), length(icon) == 1L
-  )
-  placement <- match.arg(placement)
-  
-  if (is.character(trigger)) {
-    stopifnot(length(trigger) == 1L)
-    trigger <- tags$span(
-      trigger,
-      tags$i(
-        class = paste("fa", icon),
-        style = "cursor: pointer; margin-left: 5px;"
-      )
+    tooltipText,
+    placement = c("right", "left", "top", "bottom"),
+    icon = "fa-info-circle") {
+    stopifnot(
+        is.character(tooltipText), length(tooltipText) == 1L,
+        is.character(icon), length(icon) == 1L
     )
-  } else if (!inherits(trigger, "shiny.tag")) {
-    stop("'trigger' must be a character(1) or a Shiny tag object.")
-  }
-  
-  existing_style <- trigger$attribs$style
-  merged_style <- if (is.null(existing_style) || !nzchar(existing_style)) {
-    "cursor: pointer;"
-  } else {
-    paste0(sub(";?\\s*$", "", existing_style), "; cursor: pointer;")
-  }
-  
-  htmltools::tagList(
-    htmltools::singleton(
-      shiny::tags$script(shiny::HTML(
-        "$(function() {
+    placement <- match.arg(placement)
+
+    if (is.character(trigger)) {
+        stopifnot(length(trigger) == 1L)
+        trigger <- tags$span(
+            trigger,
+            tags$i(
+                class = paste("fa", icon),
+                style = "cursor: pointer; margin-left: 5px;"
+            )
+        )
+    } else if (!inherits(trigger, "shiny.tag")) {
+        stop("'trigger' must be a character(1) or a Shiny tag object.")
+    }
+
+    existing_style <- trigger$attribs$style
+    merged_style <- if (is.null(existing_style) || !nzchar(existing_style)) {
+        "cursor: pointer;"
+    } else {
+        paste0(sub(";?\\s*$", "", existing_style), "; cursor: pointer;")
+    }
+
+    htmltools::tagList(
+        htmltools::singleton(
+            shiny::tags$script(shiny::HTML(
+                "$(function() {
              $('body').tooltip({
                selector: '[data-toggle=\"tooltip\"]',
                container: 'body'
              });
            });"
-      ))
-    ),
-    tagAppendAttributes(
-      trigger,
-      title = tooltipText,
-      `data-toggle` = "tooltip",
-      `data-placement` = placement,
-      style = merged_style
+            ))
+        ),
+        tagAppendAttributes(
+            trigger,
+            title = tooltipText,
+            `data-toggle` = "tooltip",
+            `data-placement` = placement,
+            style = merged_style
+        )
     )
-  )
 }

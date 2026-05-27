@@ -340,12 +340,14 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
 #' @importFrom shiny moduleServer observe req eventReactive reactive
 #' @importFrom plotly plot_ly renderPlotly
 #'
-server_module_annotation_plot <- function(id,
-    assays_to_process,
-    type,
-    filter_value,
-    selected_annotation,
-    filter_operator) {
+server_module_annotation_plot <- function(
+      id,
+      assays_to_process,
+      type,
+      filter_value,
+      selected_annotation,
+      filter_operator
+) {
     moduleServer(id, function(input, output, session) {
         rowname_selector_key <- ".qfeaturesgui_rowname"
 
@@ -396,29 +398,29 @@ server_module_annotation_plot <- function(id,
             annotation <- annotation_values()
             filtered <- filtered_annotation()
             selected <- selected_annotation()
-            
+
             req(annotation)
             req(selected)
-            
+
             plot_title <- if (type == "samples") {
-              "All samples across sets"
+                "All samples across sets"
             } else {
-              "All features across sets"
+                "All features across sets"
             }
-            
+
             annotation_label <- if (selected == rowname_selector_key) {
-              "Rowname"
+                "Rowname"
             } else {
-              selected
+                selected
             }
-            
+
             error_handler(
-              annotation_plot_wrapper,
-              component_name = "annotation_plot (filtering_box)",
-              annotation = annotation,
-              filtered_annotation = filtered,
-              assay_name = plot_title,
-              annotation_name = annotation_label
+                annotation_plot_wrapper,
+                component_name = "annotation_plot (filtering_box)",
+                annotation = annotation,
+                filtered_annotation = filtered,
+                assay_name = plot_title,
+                annotation_name = annotation_label
             )
         })
     })
@@ -436,10 +438,12 @@ server_module_annotation_plot <- function(id,
 #'
 #' @importFrom plotly plot_ly config %>% add_histogram layout add_annotations
 #'
-annotation_plot_wrapper <- function(annotation,
-    filtered_annotation,
-    assay_name,
-    annotation_name) {
+annotation_plot_wrapper <- function(
+      annotation,
+      filtered_annotation,
+      assay_name,
+      annotation_name
+) {
     if (all(is.na(annotation))) {
         plot <- plot_ly(
             x = numeric(0),

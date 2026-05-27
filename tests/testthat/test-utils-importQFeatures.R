@@ -31,6 +31,26 @@ test_that("log_transform_existing_sets validates selected assays", {
         "out-of-bounds"
     )
     expect_error(
+        log_transform_existing_sets(qf, i = 0),
+        "out-of-bounds"
+    )
+    expect_error(
+        log_transform_existing_sets(qf, i = -1),
+        "out-of-bounds"
+    )
+    expect_error(
+        log_transform_existing_sets(qf, i = 1.5),
+        "whole-number"
+    )
+    expect_error(
+        log_transform_existing_sets(qf, i = NA_real_),
+        "NA values"
+    )
+    expect_error(
+        log_transform_existing_sets(qf, i = Inf),
+        "non-finite"
+    )
+    expect_error(
         log_transform_existing_sets(qf, i = c(TRUE, FALSE, TRUE)),
         "does not match"
     )

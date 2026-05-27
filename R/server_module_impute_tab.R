@@ -198,32 +198,35 @@ server_module_impute_tab <- function(id, step_number, step_rv, parent_rv) {
             )
         })
 
-        observeEvent(input$export, {
-            req(processed_state())
-            applied_state <- processed_state()
-            method <- applied_state$method
-            with_task_loader(
-                caption = "Saving sets in QFeatures object",
-                expr = {
-                    error_handler(
-                        add_assays_to_global_rv,
-                        component_name = "Add assays to global_rv",
-                        processed_qfeatures = applied_state$qfeatures,
-                        step_number = step_number,
-                        type = "imputation"
-                    )
+        observeEvent(input$export,
+            {
+                req(processed_state())
+                applied_state <- processed_state()
+                method <- applied_state$method
+                with_task_loader(
+                    caption = "Saving sets in QFeatures object",
+                    expr = {
+                        error_handler(
+                            add_assays_to_global_rv,
+                            component_name = "Add assays to global_rv",
+                            processed_qfeatures = applied_state$qfeatures,
+                            step_number = step_number,
+                            type = "imputation"
+                        )
 
-                    global_rv$code_lines[[paste0("Initialization_names_", step_number)]] <- codeGeneratorInitialization(
-                        qf = .qf$qfeatures,
-                        step_number = step_number
-                    )
-                    global_rv$code_lines[[paste0("imputation_", step_number)]] <- codeGeneratorImpute(
-                        method = method,
-                        step_number = step_number
-                    )
-                    step_rv(step_rv() + 1L)
-                }
-            )
-        }, ignoreInit = TRUE)
+                        global_rv$code_lines[[paste0("Initialization_names_", step_number)]] <- codeGeneratorInitialization(
+                            qf = .qf$qfeatures,
+                            step_number = step_number
+                        )
+                        global_rv$code_lines[[paste0("imputation_", step_number)]] <- codeGeneratorImpute(
+                            method = method,
+                            step_number = step_number
+                        )
+                        step_rv(step_rv() + 1L)
+                    }
+                )
+            },
+            ignoreInit = TRUE
+        )
     })
 }

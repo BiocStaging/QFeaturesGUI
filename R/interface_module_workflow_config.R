@@ -162,8 +162,8 @@ interface_module_workflow_config_tab <- function(id, initial_steps) {
                 width = 6,
                 box(
                     title = bs3Tooltip(
-                      trigger = "Workflow Configuration",
-                      tooltipText = "Drag and drop an element to add a step to your workflow."
+                        trigger = "Workflow Configuration",
+                        tooltipText = "Drag and drop an element to add a step to your workflow."
                     ),
                     width = 12,
                     solidHeader = TRUE,

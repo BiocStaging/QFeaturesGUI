@@ -79,7 +79,7 @@ interface_module_aggregation_tab <- function(id) {
                 uiOutput(NS(id, "aggregation_boxplot_ui"))
             )
         ),
-         bs3Tooltip(
+        bs3Tooltip(
             trigger = shiny::actionButton(
                 inputId = NS(id, "export"),
                 "Save the processed sets",
@@ -93,7 +93,7 @@ interface_module_aggregation_tab <- function(id) {
                 sep = " "
             ),
             placement = "top"
-         )
+        )
     )
 }
 

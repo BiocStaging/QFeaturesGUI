@@ -21,8 +21,8 @@ interface_module_impute_tab <- function(id) {
                 selectInput(
                     inputId = NS(id, "method"),
                     label = bs3Tooltip(
-                      "Imputation method",
-                      tooltipText = "For more precision about the method see online documentation"
+                        "Imputation method",
+                        tooltipText = "For more precision about the method see online documentation"
                     ),
                     choices = character(0)
                 ),
