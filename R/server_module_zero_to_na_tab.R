@@ -42,38 +42,41 @@ server_module_zero_to_na_tab <- function(id, step_number, step_rv, parent_rv) {
             )
         })
 
-        observeEvent(input$export, {
-            req(parent_assays())
-            assays_to_process <- parent_assays()
-            with_task_loader(
-                caption = "Replacing zeros with missing values and saving sets",
-                expr = {
-                    processed_assays <- error_handler(
-                        QFeatures::zeroIsNA,
-                        component_name = "Zero to NA",
-                        object = assays_to_process,
-                        i = seq_along(assays_to_process)
-                    )
-                    req(processed_assays)
+        observeEvent(input$export,
+            {
+                req(parent_assays())
+                assays_to_process <- parent_assays()
+                with_task_loader(
+                    caption = "Replacing zeros with missing values and saving sets",
+                    expr = {
+                        processed_assays <- error_handler(
+                            QFeatures::zeroIsNA,
+                            component_name = "Zero to NA",
+                            object = assays_to_process,
+                            i = seq_along(assays_to_process)
+                        )
+                        req(processed_assays)
 
-                    error_handler(
-                        add_assays_to_global_rv,
-                        component_name = "Add assays to global_rv",
-                        processed_qfeatures = processed_assays,
-                        step_number = step_number,
-                        type = "zero_to_na"
-                    )
+                        error_handler(
+                            add_assays_to_global_rv,
+                            component_name = "Add assays to global_rv",
+                            processed_qfeatures = processed_assays,
+                            step_number = step_number,
+                            type = "zero_to_na"
+                        )
 
-                    global_rv$code_lines[[paste0("Initialization_names_", step_number)]] <- codeGeneratorInitialization(
-                        qf = .qf$qfeatures,
-                        step_number = step_number
-                    )
-                    global_rv$code_lines[[paste0("zero_to_na_", step_number)]] <- codeGeneratorZeroToNA(
-                        step_number = step_number
-                    )
-                    step_rv(step_rv() + 1L)
-                }
-            )
-        }, ignoreInit = TRUE)
+                        global_rv$code_lines[[paste0("Initialization_names_", step_number)]] <- codeGeneratorInitialization(
+                            qf = .qf$qfeatures,
+                            step_number = step_number
+                        )
+                        global_rv$code_lines[[paste0("zero_to_na_", step_number)]] <- codeGeneratorZeroToNA(
+                            step_number = step_number
+                        )
+                        step_rv(step_rv() + 1L)
+                    }
+                )
+            },
+            ignoreInit = TRUE
+        )
     })
 }

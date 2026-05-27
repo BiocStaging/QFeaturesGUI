@@ -12,46 +12,46 @@ interface_module_normalisation_tab <- function(id) {
     tagList(
         fluidRow(
             box(
-              title = "Settings",
-              status = "primary",
-              width = 3,
-              solidHeader = TRUE,
-              collapsible = TRUE,
-              selectInput(
-                inputId = NS(id, "method"),
-                label = bs3Tooltip(
-                  "Methods",
-                  "For more information on the method, see online documentation."
+                title = "Settings",
+                status = "primary",
+                width = 3,
+                solidHeader = TRUE,
+                collapsible = TRUE,
+                selectInput(
+                    inputId = NS(id, "method"),
+                    label = bs3Tooltip(
+                        "Methods",
+                        "For more information on the method, see online documentation."
+                    ),
+                    choices = c(
+                        "sum",
+                        "max",
+                        "center.mean",
+                        "center.median",
+                        "div.mean",
+                        "div.median",
+                        "diff.median",
+                        "quantiles",
+                        "quantiles.robust",
+                        "vsn"
+                    ),
+                    selected = "center.median"
                 ),
-                choices = c(
-                  "sum",
-                  "max",
-                  "center.mean",
-                  "center.median",
-                  "div.mean",
-                  "div.median",
-                  "diff.median",
-                  "quantiles",
-                  "quantiles.robust",
-                  "vsn"
+                br(),
+                actionButton(
+                    inputId = NS(id, "apply_normalisation"),
+                    label = "Apply normalisation",
+                    width = "100%",
+                    class = "load-button"
                 ),
-                selected = "center.median"
-              ),
-              br(),
-              actionButton(
-                inputId = NS(id, "apply_normalisation"),
-                label = "Apply normalisation",
-                width = "100%",
-                class = "load-button"
-              ),
-              br(), br(),
-              tags$h4("Plot options"),
-              selectInput(
-                inputId = NS(id, "color"),
-                label = "Color by",
-                choices = c("NULL"),
-                selected = "NULL"
-              )
+                br(), br(),
+                tags$h4("Plot options"),
+                selectInput(
+                    inputId = NS(id, "color"),
+                    label = "Color by",
+                    choices = c("NULL"),
+                    selected = "NULL"
+                )
             ),
             box(
                 title = "Density Plots",
@@ -87,7 +87,7 @@ interface_module_normalisation_tab <- function(id) {
         ),
         bs3Tooltip(
             actionButton(
-                NS(id,"export"),
+                NS(id, "export"),
                 "Save the processed sets",
                 icon("hand-pointer", class = "fa-solid"),
                 width = "100%",

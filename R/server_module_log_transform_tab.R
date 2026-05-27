@@ -113,33 +113,34 @@ server_module_log_transform_tab <- function(id, step_number, step_rv, parent_rv)
             )
         })
 
-        observeEvent(input$export, {
-            req(processed_assays())
-            with_task_loader(
-                caption = "Saving sets in QFeatures object",
-                expr = {
-                    error_handler(
-                        add_assays_to_global_rv,
-                        component_name = "Add assays to global_rv",
-                        processed_qfeatures = processed_assays(),
-                        step_number = step_number,
-                        type = "log_transform"
-                    )
+        observeEvent(input$export,
+            {
+                req(processed_assays())
+                with_task_loader(
+                    caption = "Saving sets in QFeatures object",
+                    expr = {
+                        error_handler(
+                            add_assays_to_global_rv,
+                            component_name = "Add assays to global_rv",
+                            processed_qfeatures = processed_assays(),
+                            step_number = step_number,
+                            type = "log_transform"
+                        )
 
-                    global_rv$code_lines[[paste0("Initialization_names_", step_number)]] <- codeGeneratorInitialization(
-                        qf = .qf$qfeatures,
-                        step_number = step_number
-                    )
-                    global_rv$code_lines[[paste0("log_transform_", step_number)]] <- codeGeneratorLogTransform(
-                        base = selected_base(),
-                        pseudocount = input$pseudocount,
-                        step_number = step_number
-                    )
-                    step_rv(step_rv() + 1L)
-                }
-            )
-        },
-        ignoreInit = TRUE
+                        global_rv$code_lines[[paste0("Initialization_names_", step_number)]] <- codeGeneratorInitialization(
+                            qf = .qf$qfeatures,
+                            step_number = step_number
+                        )
+                        global_rv$code_lines[[paste0("log_transform_", step_number)]] <- codeGeneratorLogTransform(
+                            base = selected_base(),
+                            pseudocount = input$pseudocount,
+                            step_number = step_number
+                        )
+                        step_rv(step_rv() + 1L)
+                    }
+                )
+            },
+            ignoreInit = TRUE
         )
     })
 }

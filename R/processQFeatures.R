@@ -36,7 +36,7 @@
 #' @importFrom shiny shinyApp runApp addResourcePath
 #'
 #' @examples
-#' 
+#'
 #' # the example should be launched with `ask = FALSE`
 #'
 #' library(QFeatures)
@@ -59,18 +59,20 @@
 #' if (interactive()) {
 #'     shiny::runApp(app)
 #' }
-processQFeatures <- function(qfeatures,
-    initialSets = seq_along(qfeatures),
-    prefilledSteps = c(
-        "sampleFiltering",
-        "featureFiltering",
-        "missingValuesFeatures",
-        "missingValuesSamples",
-        "normalisation",
-        "aggregation",
-        "join",
-        "aggregation"
-    )) {
+processQFeatures <- function(
+      qfeatures,
+      initialSets = seq_along(qfeatures),
+      prefilledSteps = c(
+          "sampleFiltering",
+          "featureFiltering",
+          "missingValuesFeatures",
+          "missingValuesSamples",
+          "normalisation",
+          "aggregation",
+          "join",
+          "aggregation"
+      )
+) {
     ## Validate QFeatures input
     qfeatures <- check_qfeatures(qfeatures)
 

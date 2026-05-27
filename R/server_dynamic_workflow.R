@@ -53,8 +53,8 @@ server_dynamic_workflow <- function(input, output, session) {
                 "Imputation"                = paste0("imputation_", i, "_v", v),
                 "Filtering NAs by Features" = paste0("missingValuesFeatures_", i, "_v", v),
                 "Filtering NAs by Samples"  = paste0("missingValuesSamples_", i, "_v", v),
-                "Aggregation"               = paste0("aggregation_",i,"_v",v),
-                "Join"                      = paste0("join_",i,"_v",v)
+                "Aggregation"               = paste0("aggregation_", i, "_v", v),
+                "Join"                      = paste0("join_", i, "_v", v)
             )
 
             output[[paste0("dynamic_step_ui_", i)]] <- renderUI({
