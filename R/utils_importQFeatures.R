@@ -24,11 +24,24 @@ log_transform_existing_sets <- function(object, i = seq_along(object), base = 2,
                 call. = FALSE
             )
         }
-    } else if (is.numeric(i) || is.logical(i)) {
+    } else if (is.numeric(i)) {
         set_names <- all_set_names[i]
         if (anyNA(set_names)) {
             stop("`i` contains out-of-bounds QFeatures set indices.", call. = FALSE)
         }
+    } else if (is.logical(i)) {
+        if (length(i) != length(all_set_names)) {
+            stop(
+                "`i` is logical but its length (", length(i),
+                ") does not match the number of QFeatures sets (",
+                length(all_set_names), ").",
+                call. = FALSE
+            )
+        }
+        if (anyNA(i)) {
+            stop("`i` contains NA values.", call. = FALSE)
+        }
+        set_names <- all_set_names[i]
     } else {
         stop("`i` must be numeric, logical, or character.", call. = FALSE)
     }

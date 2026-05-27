@@ -31,6 +31,14 @@ test_that("log_transform_existing_sets validates selected assays", {
         "out-of-bounds"
     )
     expect_error(
+        log_transform_existing_sets(qf, i = c(TRUE, FALSE, TRUE)),
+        "does not match"
+    )
+    expect_error(
+        log_transform_existing_sets(qf, i = c(TRUE, NA)),
+        "NA values"
+    )
+    expect_error(
         log_transform_existing_sets(qf, i = list("set1")),
         "must be numeric, logical, or character"
     )

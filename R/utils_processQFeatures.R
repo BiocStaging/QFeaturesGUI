@@ -146,11 +146,11 @@ normalise_initial_sets <- function(qfeatures, initialSets) {
 
         ## Numeric indexing
     } else if (is.numeric(initialSets)) {
+        if (anyNA(initialSets)) {
+            stop("`initialSets` contains NA values.")
+        }
         if (any(initialSets < 1 | initialSets > n)) {
             stop("`initialSets` contains out-of-bounds indices.")
-        }
-        if (any(is.na(initialSets))) {
-            stop("`initialSets` contains NA values.")
         }
         idx <- as.integer(initialSets)
 
@@ -797,7 +797,7 @@ density_by_sample_plotly <- function(qfeatures, color = NULL, title = "Density b
         group = character(),
         stringsAsFactors = FALSE
     )
-    for (assayName in names(qfeatures)) {
+    assay_dfs <- lapply(names(qfeatures), function(assayName) {
         assayData <- assay(qfeatures[[assayName]])
 
         intensities <- as.vector(assayData)
@@ -805,13 +805,14 @@ density_by_sample_plotly <- function(qfeatures, color = NULL, title = "Density b
         groups <- as.character(sample_groups[sampleNames])
         groups[is.na(groups)] <- "NA"
 
-        assay_df <- data.frame(
+        data.frame(
             intensity = intensities,
             group = groups,
             stringsAsFactors = FALSE
         )
-
-        combined_df <- rbind(combined_df, assay_df)
+    })
+    if (length(assay_dfs) > 0L) {
+        combined_df <- do.call(rbind, assay_dfs)
     }
     combined_df <- combined_df[is.finite(combined_df$intensity), , drop = FALSE]
     if (nrow(combined_df) == 0L) {
@@ -1046,6 +1047,7 @@ summarize_assays_to_df <- function(qfeatures, sample_column, feature_column = NU
     if (!is.null(feature_column)) {
         combined_df$feature_type <- character(0)
     }
+    assay_dfs <- list()
     for (assayName in names(qfeatures)) {
         assayData <- as.data.frame(assay(qfeatures[[assayName]]))
         assayData$PSM <- rownames(assayData)
@@ -1066,7 +1068,10 @@ summarize_assays_to_df <- function(qfeatures, sample_column, feature_column = NU
             matched_indices <- match(assayData$PSM, rownames(rowData(qfeatures[[assayName]])))
             assayData$feature_type <- as.vector(rowData(qfeatures[[assayName]])[matched_indices, feature_column])
         }
-        combined_df <- rbind(combined_df, assayData)
+        assay_dfs[[length(assay_dfs) + 1L]] <- assayData
+    }
+    if (length(assay_dfs) > 0L) {
+        combined_df <- do.call(rbind, assay_dfs)
     }
     combined_df
 }
@@ -1377,8 +1382,7 @@ add_joined_assay_to_global_rv <- function(processed_qfeatures, step_number, feat
     from = from_names,
     to = new_name
   )
-  
-  n <- length(processed_qfeatures)
+
   alert_text <- "1 set added to QFeatures."
   invalidation_message <- downstream_invalidation_message(
     invalidated_downstream_steps
