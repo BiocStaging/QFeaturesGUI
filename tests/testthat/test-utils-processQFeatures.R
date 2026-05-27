@@ -26,6 +26,10 @@ test_that("normalise_initial_sets rejects invalid selectors", {
         "out-of-bounds"
     )
     expect_error(
+        normalise_initial_sets(qf, 1.5),
+        "whole-number"
+    )
+    expect_error(
         normalise_initial_sets(qf, NA_real_)
     )
     expect_error(
@@ -51,6 +55,10 @@ test_that("check_qfeatures validates objects and RDS paths", {
     expect_error(
         check_qfeatures(tempfile(fileext = ".rds")),
         "does not exist"
+    )
+    expect_error(
+        check_qfeatures(c("first.rds", "second.rds")),
+        "single path"
     )
     expect_error(
         check_qfeatures(data.frame(x = 1)),
@@ -90,6 +98,12 @@ test_that("process workflow name helpers add and parse step suffixes", {
             c("raw", "set1_(QFeaturesGUI#0)", "set2_(QFeaturesGUI#12)_x")
         ),
         c(NA_integer_, 0L, 12L)
+    )
+    expect_equal(
+        qfeaturesgui_base_name(
+            c("set1_(QFeaturesGUI#0)", "set2_(QFeaturesGUI#12)_x", "raw")
+        ),
+        c("set1", "set2", "raw")
     )
 })
 
@@ -191,5 +205,40 @@ test_that("imputation method metadata is internally consistent", {
     expect_error(
         assert_imputation_method_available("unknown"),
         "Unknown imputation method"
+    )
+})
+
+test_that("pca_plotly handles no color and many categorical levels", {
+    pca_result <- pcaMethods::pca(
+        matrix(seq_len(48), nrow = 12),
+        method = "svd",
+        center = TRUE
+    )
+    pca_df <- data.frame(
+        PC1 = seq_len(12),
+        PC2 = rev(seq_len(12)),
+        row.names = paste0("row", seq_len(12))
+    )
+
+    no_color_plot <- pca_plotly(
+        pca_df,
+        pca_result = pca_result,
+        color_name = "NULL",
+        show_legend = TRUE
+    )
+    expect_s3_class(no_color_plot, "plotly")
+    expect_null(no_color_plot$x$attrs[[1]]$customdata)
+    expect_false(grepl("customdata", no_color_plot$x$attrs[[1]]$hovertemplate))
+
+    pca_df$.qfeaturesgui_row_id <- rownames(pca_df)
+    pca_df$group <- paste0("group", seq_len(12))
+    expect_s3_class(
+        pca_plotly(
+            pca_df,
+            pca_result = pca_result,
+            color_name = "group",
+            show_legend = TRUE
+        ),
+        "plotly"
     )
 })

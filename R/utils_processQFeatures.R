@@ -1,10 +1,10 @@
 # Exception menu helpers ----
 
 # This function is inspired by the messageItem function from the shinydashboardPlus package
-# This custom version serve 3 goals:
-# 1. It change the icon used in for the clock that was no more available from font-awesome
-# 2. It remove the icon from the messageItem (and margin removed)
-# 3. It return the clicked the clicked exception box to the `input$exception_clicked` variable
+# This custom version serves 3 goals:
+# 1. It changes the icon used for the clock that is no longer available from font-awesome
+# 2. It removes the icon from the messageItem and removes its margin
+# 3. It returns the clicked exception box to the `input$exception_clicked` variable
 #
 #' Create a clickable message item for exception notifications.
 #'
@@ -152,6 +152,9 @@ normalise_initial_sets <- function(qfeatures, initialSets) {
         if (any(initialSets < 1 | initialSets > n)) {
             stop("`initialSets` contains out-of-bounds indices.")
         }
+        if (any(initialSets != as.integer(initialSets))) {
+            stop("`initialSets` must contain whole-number indices.")
+        }
         idx <- as.integer(initialSets)
 
         ## Character indexing (assay names)
@@ -196,6 +199,9 @@ check_qfeatures <- function(qfeatures) {
     }
 
     if (is.character(qfeatures)) {
+        if (length(qfeatures) != 1L) {
+            stop("`qfeatures` must be a single path to an RDS file.")
+        }
         if (!file.exists(qfeatures)) {
             stop("The file '", qfeatures, "' does not exist.")
         }
@@ -275,6 +281,12 @@ qfeaturesgui_step_number <- function(string) {
         }
         NA_integer_
     }, integer(1))
+}
+
+qfeaturesgui_base_name <- function(string) {
+    vapply(strsplit(string, "_(QFeaturesGUI#", fixed = TRUE), function(parts) {
+        parts[[1]]
+    }, character(1))
 }
 
 #' Get saved downstream workflow steps
@@ -385,6 +397,7 @@ invalidate_steps_from <- function(step_number) {
 #' @param method A character string specifying the PCA method to use. This should be one of the methods supported by the pcaMethods package.
 #' @param center A logical indicating whether the variables should be centered before PCA.
 #' @param scale A logical indicating whether the variables should be scaled before PCA.
+#' @param transpose A logical indicating whether the assay matrix should be transposed before PCA.
 #'
 #' @return A pcaRes object resulting from the PCA.
 #' @rdname INTERNAL_pcaMethods_wrapper
@@ -398,7 +411,8 @@ pcaMethods_wrapper <- function(sce, method, center, scale, transpose = FALSE) {
     mat <- mat[rowSums(is.na(mat)) != ncol(mat), ]
     mat <- mat[, colSums(is.na(mat)) < nrow(mat)]
     if (scale) {
-        mat <- scale(mat)
+        mat <- base::scale(mat, center = center, scale = TRUE)
+        center <- FALSE
     }
     if (transpose) {
         mat <- t(mat)
@@ -430,22 +444,25 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
     if (color_name == "NULL") {
         colorFormula <- NULL
         text <- row.names(df)
-        colorPalette <- suppressWarnings(RColorBrewer::brewer.pal(1, "Set1"))
-        hoverText <- paste(
-            "%{text}<br>",
-            "%{customdata}<extra></extra>"
-        )
-        customizeData <- "NULL"
+        colorPalette <- RColorBrewer::brewer.pal(3, "Set1")[1]
+        hoverText <- "%{text}<extra></extra>"
+        customizeData <- NULL
     } else {
         colorFormula <- as.formula(paste0("~", color_name))
         text <- ~.qfeaturesgui_row_id
         colorPalette <- if (is.numeric(df[[color_name]])) {
             viridisLite::viridis(10)
         } else {
-            suppressWarnings(RColorBrewer::brewer.pal(
-                length(unique(df[[color_name]])),
+            n_colors <- max(1L, length(unique(df[[color_name]])))
+            base_palette <- RColorBrewer::brewer.pal(
+                min(max(3L, n_colors), 9L),
                 "Set1"
-            ))
+            )
+            if (n_colors > length(base_palette)) {
+                grDevices::colorRampPalette(base_palette)(n_colors)
+            } else {
+                base_palette[seq_len(n_colors)]
+            }
         }
         hoverText <- paste(
             "%{text}<br>",
@@ -550,7 +567,7 @@ add_assays_to_global_rv <- function(processed_qfeatures, step_number, type, varF
         }
 
         new_name <- paste0(
-            strsplit(name, "_(QFeaturesGUI#", fixed = TRUE)[[1]][[1]],
+            qfeaturesgui_base_name(name),
             "_(QFeaturesGUI#", step_number, ")",
             "_", type, "_", step_number
         )
@@ -1370,7 +1387,7 @@ add_joined_assay_to_global_rv <- function(processed_qfeatures, step_number, feat
 
   name <- names(processed_qfeatures)[length(processed_qfeatures)]
   new_name <- paste0(featuresType, "_",
-    strsplit(name,"_QFeaturesGUI#",fixed =TRUE)[[1]][[1]],
+    qfeaturesgui_base_name(name),
     "_(QFeaturesGUI#", step_number, ")",
     "_", type, "_", step_number
     )
