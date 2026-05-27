@@ -229,16 +229,16 @@ test_that("pca_plotly handles no color and many categorical levels", {
     expect_s3_class(no_color_plot, "plotly")
     expect_null(no_color_plot$x$attrs[[1]]$customdata)
     expect_false(grepl("customdata", no_color_plot$x$attrs[[1]]$hovertemplate))
+    expect_error(plotly::plotly_build(no_color_plot), NA)
 
     pca_df$.qfeaturesgui_row_id <- rownames(pca_df)
     pca_df$group <- paste0("group", seq_len(12))
-    expect_s3_class(
-        pca_plotly(
-            pca_df,
-            pca_result = pca_result,
-            color_name = "group",
-            show_legend = TRUE
-        ),
-        "plotly"
+    many_groups_plot <- pca_plotly(
+        pca_df,
+        pca_result = pca_result,
+        color_name = "group",
+        show_legend = TRUE
     )
+    expect_s3_class(many_groups_plot, "plotly")
+    expect_error(plotly::plotly_build(many_groups_plot), NA)
 })

@@ -470,17 +470,24 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
         )
         customizeData <- as.formula(paste0("~", color_name))
     }
-    plotly <- plot_ly(df,
+    plotly_args <- list(
+        data = df,
         x = ~PC1,
         y = ~PC2,
-        color = colorFormula,
         text = text,
         type = "scatter",
         mode = "markers",
         colors = colorPalette,
-        hovertemplate = hoverText,
-        customdata = customizeData
-    ) %>%
+        hovertemplate = hoverText
+    )
+    if (!is.null(colorFormula)) {
+        plotly_args$color <- colorFormula
+    }
+    if (!is.null(customizeData)) {
+        plotly_args$customdata <- customizeData
+    }
+
+    plotly <- do.call(plot_ly, plotly_args) %>%
         layout(
             xaxis = list(title = paste(
                 "PC1",
