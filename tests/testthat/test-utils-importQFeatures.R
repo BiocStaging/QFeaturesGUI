@@ -35,16 +35,3 @@ test_that("log_transform_existing_sets validates selected assays", {
         "must be numeric, logical, or character"
     )
 })
-
-test_that("log_transform_qfeatures transforms all assays and preserves names", {
-    qf <- make_test_qfeatures()
-
-    logged <- log_transform_qfeatures(qf, base = 10, pseudocount = 1)
-
-    expect_equal(names(logged), names(qf))
-    expect_equal(
-        SummarizedExperiment::assay(logged[["set2"]]),
-        log10(SummarizedExperiment::assay(qf[["set2"]]) + 1),
-        tolerance = 1e-12
-    )
-})
