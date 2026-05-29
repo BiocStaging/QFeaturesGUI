@@ -25,6 +25,30 @@ server_module_workflow_config <- function(id) {
         pending_config <- reactiveVal(NULL)
 
         observeEvent(input$apply, {
+            if (is.null(.qf$qfeatures)) {
+                showModal(modalDialog(
+                    title = "No QFeatures object loaded",
+                    p(
+                        "Workflow steps cannot be configured because no",
+                        "QFeatures object was provided when the app started."
+                    ),
+                    p(
+                        "Upload an .rds file containing a QFeatures object",
+                        "and choose the initial sets before applying a workflow."
+                    ),
+                    easyClose = TRUE,
+                    footer = tagList(
+                        modalButton("Cancel"),
+                        actionButton(
+                            "startup_show_upload",
+                            "Upload QFeatures",
+                            class = "btn-primary"
+                        )
+                    )
+                ))
+                return(invisible(NULL))
+            }
+
             any_saved <- !is.null(global_rv$step_rvs) &&
                 any(vapply(global_rv$step_rvs, function(rv) rv() > 0L, logical(1)))
 

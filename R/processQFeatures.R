@@ -9,9 +9,10 @@
 #' \linkS4class{QFeatures} object or as a path to an \code{.rds} file
 #' containing one.
 #'
-#' @param qfeatures A \linkS4class{QFeatures} object to be processed,
+#' @param qfeatures Optional \linkS4class{QFeatures} object to be processed,
 #'   or a character string specifying the path to a \code{.rds} file
-#'   containing a \linkS4class{QFeatures} object.
+#'   containing a \linkS4class{QFeatures} object. If omitted, the app starts
+#'   without processing steps and displays a startup modal.
 #'
 #' @param initialSets An integer, logical, or character vector specifying
 #'   which assays (feature sets) should be used as the starting point for
@@ -60,8 +61,8 @@
 #'     shiny::runApp(app)
 #' }
 processQFeatures <- function(
-      qfeatures,
-      initialSets = seq_along(qfeatures),
+      qfeatures = NULL,
+      initialSets = NULL,
       prefilledSteps = c(
           "sampleFiltering",
           "featureFiltering",
@@ -73,14 +74,21 @@ processQFeatures <- function(
           "aggregation"
       )
 ) {
-    ## Validate QFeatures input
-    qfeatures <- check_qfeatures(qfeatures)
-
-    ## Normalize initial assay selection
-    initial_sets <- normalise_initial_sets(qfeatures, initialSets)
-
-    ## Validate and map workflow steps
+    qfeatures_missing <- missing(qfeatures) || is.null(qfeatures)
     initial_steps <- check_prefilled_steps(prefilledSteps)
+
+    if (qfeatures_missing) {
+        initial_sets <- integer(0)
+    } else {
+        ## Validate QFeatures input
+        qfeatures <- check_qfeatures(qfeatures)
+
+        ## Normalize initial assay selection
+        if (is.null(initialSets)) {
+            initialSets <- seq_along(qfeatures)
+        }
+        initial_sets <- normalise_initial_sets(qfeatures, initialSets)
+    }
 
     options(shiny.maxRequestSize = 100 * 1024^2)
     addResourcePath(
@@ -89,7 +97,12 @@ processQFeatures <- function(
     )
 
     ui <- build_process_ui(initial_steps)
-    server <- build_process_server(qfeatures, initial_sets, initial_steps)
+    server <- build_process_server(
+        qfeatures,
+        initial_sets,
+        initial_steps,
+        has_qfeatures = !qfeatures_missing
+    )
 
     shinyApp(ui = ui, server = server)
 }

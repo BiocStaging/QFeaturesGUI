@@ -198,7 +198,9 @@ check_qfeatures <- function(qfeatures) {
         stop("`qfeatures` argument is missing")
     }
 
+    from_rds_file <- FALSE
     if (is.character(qfeatures)) {
+        from_rds_file <- TRUE
         if (length(qfeatures) != 1L) {
             stop("`qfeatures` must be a single path to an RDS file.")
         }
@@ -215,6 +217,9 @@ check_qfeatures <- function(qfeatures) {
     }
 
     if (!inherits(qfeatures, "QFeatures")) {
+        if (from_rds_file) {
+            stop("The RDS file does not contain a QFeatures object.")
+        }
         stop(
             "`qfeatures` must be a QFeatures object or a valid path to an RDS file containing one."
         )
