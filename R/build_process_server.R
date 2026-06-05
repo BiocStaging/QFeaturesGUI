@@ -43,9 +43,27 @@ build_process_server <- function(qfeatures, initial_sets, initial_steps, has_qfe
 
         uploaded_qfeatures <- shiny::reactiveVal(NULL)
         upload_message <- shiny::reactiveVal(NULL)
+        startup_reading <- shiny::reactiveVal(FALSE)
+
+        output$startup_initial_sets_label <- shiny::renderText({
+            uploaded <- uploaded_qfeatures()
+            if (is.null(uploaded)) {
+                return("Initial sets")
+            }
+
+            selected_sets <- input$startup_initial_sets
+            if (is.null(selected_sets)) {
+                selected_sets <- names(uploaded)
+            }
+
+            paste0("Initial sets (", length(selected_sets), " selected)")
+        })
 
         output$startup_initial_sets_ui <- shiny::renderUI({
             uploaded <- uploaded_qfeatures()
+            if (startup_reading()) {
+                return(NULL)
+            }
             if (is.null(uploaded)) {
                 return(shiny::p(
                     "Upload an .rds file containing a QFeatures object to",
@@ -53,16 +71,23 @@ build_process_server <- function(qfeatures, initial_sets, initial_steps, has_qfe
                 ))
             }
 
-            shiny::selectizeInput(
-                "startup_initial_sets",
-                "Initial sets",
-                choices = names(uploaded),
-                selected = names(uploaded),
-                multiple = TRUE,
-                width = "100%",
-                options = list(
-                    plugins = list("remove_button"),
-                    placeholder = "Choose one or more initial sets"
+            shiny::tagList(
+                shiny::tags$label(
+                    `for` = "startup_initial_sets",
+                    class = "control-label",
+                    shiny::textOutput("startup_initial_sets_label", inline = TRUE)
+                ),
+                shiny::selectizeInput(
+                    "startup_initial_sets",
+                    NULL,
+                    choices = names(uploaded),
+                    selected = names(uploaded),
+                    multiple = TRUE,
+                    width = "100%",
+                    options = list(
+                        plugins = list("remove_button"),
+                        placeholder = "Choose one or more initial sets"
+                    )
                 )
             )
         })
@@ -73,6 +98,29 @@ build_process_server <- function(qfeatures, initial_sets, initial_steps, has_qfe
                 return(NULL)
             }
             shiny::tags$div(class = "text-danger", msg)
+        })
+
+        output$startup_read_status <- shiny::renderUI({
+            if (!startup_reading()) {
+                return(NULL)
+            }
+
+            shiny::tags$div(
+                class = "qfeatures-startup-read-status",
+                shiny::tags$div(
+                    class = "progress",
+                    shiny::tags$div(
+                        class = "progress-bar progress-bar-striped active",
+                        role = "progressbar",
+                        style = "width: 100%;"
+                    )
+                ),
+                shiny::tags$p(
+                    shiny::tags$em(
+                        "Reading QFeatures object. This can take some time for large files."
+                    )
+                )
+            )
         })
 
         show_startup_upload_modal <- function() {
@@ -89,6 +137,7 @@ build_process_server <- function(qfeatures, initial_sets, initial_steps, has_qfe
                     accept = c(".rds", ".Rds", ".RDS")
                 ),
                 shiny::uiOutput("startup_initial_sets_ui"),
+                shiny::uiOutput("startup_read_status"),
                 shiny::uiOutput("startup_upload_message"),
                 easyClose = FALSE,
                 size = "l",
@@ -106,20 +155,25 @@ build_process_server <- function(qfeatures, initial_sets, initial_steps, has_qfe
         shiny::observeEvent(input$startup_qfeatures_rds, {
             uploaded_qfeatures(NULL)
             upload_message(NULL)
+            startup_reading(TRUE)
+            datapath <- input$startup_qfeatures_rds$datapath
 
-            uploaded <- tryCatch(
-                check_qfeatures(input$startup_qfeatures_rds$datapath),
-                error = function(e) e
-            )
-            if (inherits(uploaded, "error")) {
-                upload_message(paste(
-                    "Could not load QFeatures object:",
-                    conditionMessage(uploaded)
-                ))
-                return(invisible(NULL))
-            }
+            session$onFlushed(function() {
+                uploaded <- tryCatch(
+                    check_qfeatures(datapath),
+                    error = function(e) e
+                )
+                startup_reading(FALSE)
+                if (inherits(uploaded, "error")) {
+                    upload_message(paste(
+                        "Could not load QFeatures object:",
+                        conditionMessage(uploaded)
+                    ))
+                    return(invisible(NULL))
+                }
 
-            uploaded_qfeatures(uploaded)
+                uploaded_qfeatures(uploaded)
+            }, once = TRUE)
         }, ignoreInit = TRUE)
 
         shiny::observeEvent(input$startup_load_qfeatures, {

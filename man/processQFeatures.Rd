@@ -5,25 +5,33 @@
 \title{Launch a Shiny application to process QFeatures objects}
 \usage{
 processQFeatures(
-  qfeatures,
-  initialSets = seq_along(qfeatures),
+  qfeatures = NULL,
+  initialSets = NULL,
   prefilledSteps = c("sampleFiltering", "featureFiltering", "missingValuesFeatures",
-    "missingValuesSamples", "normalisation", "aggregation", "join", "aggregation")
+    "missingValuesSamples", "normalisation", "aggregation", "join", "aggregation"),
+  maxSize = 100
 )
 }
 \arguments{
-\item{qfeatures}{A \linkS4class{QFeatures} object to be processed,
+\item{qfeatures}{Optional \linkS4class{QFeatures} object to be processed,
 or a character string specifying the path to a \code{.rds} file
-containing a \linkS4class{QFeatures} object.}
+containing a \linkS4class{QFeatures} object. If omitted, the app starts
+without processing steps and displays a startup modal.}
 
 \item{initialSets}{An integer, logical, or character vector specifying
 which assays (feature sets) should be used as the starting point for
-processing. Defaults to all assays in \code{qfeatures}.}
+processing. If \code{NULL} and \code{qfeatures} is provided, all assays in
+\code{qfeatures} are used. If \code{qfeatures} is omitted, the user chooses
+the initial sets after uploading the \code{.rds} file.}
 
 \item{prefilledSteps}{A character vector specifying the initial workflow
 steps to display when the application launches. Steps must be provided
 using their internal identifiers (e.g. \code{"sampleFiltering"},
 \code{"featureFiltering"}, \code{"normalisation"}).}
+
+\item{maxSize}{An integer that changes the \code{shiny.maxRequestSize}
+value, in MB. This controls the maximum upload size for the startup
+\code{.rds} file upload modal.}
 }
 \value{
 The processQFeatures Shiny application.
@@ -33,9 +41,10 @@ The processQFeatures Shiny application.
 that allows users to visually configure and apply pre-processing
 workflows to a \linkS4class{QFeatures} object.
 
-The input \code{qfeatures} can be provided either as an in-memory
-\linkS4class{QFeatures} object or as a path to an \code{.rds} file
-containing one.
+The input \code{qfeatures} can be provided as an in-memory
+\linkS4class{QFeatures} object, as a path to an \code{.rds} file
+containing one, or omitted. If omitted, the application prompts the user
+to upload a \linkS4class{QFeatures} object from an \code{.rds} file.
 }
 \details{
 The application provides a drag-and-drop workflow builder that allows
@@ -61,7 +70,8 @@ qfeatures <- readQFeatures(
 
 app <- processQFeatures(
     qfeatures,
-    initialSets = seq_along(qfeatures)
+    initialSets = seq_along(qfeatures),
+    maxSize = 100
 )
 
 if (interactive()) {
