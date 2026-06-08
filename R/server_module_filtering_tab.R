@@ -151,6 +151,12 @@ server_module_filtering_tab <- function(
                 filtering_condition_specs[[paste0("condition_spec_", i)]]
             })
             specs <- Filter(function(spec) {
+                if (is.list(spec) &&
+                    !is.null(spec$annotation) &&
+                    !is.null(spec$operator) &&
+                    is_missingness_filter_operator(spec$operator)) {
+                    return(TRUE)
+                }
                 is.list(spec) &&
                     !is.null(spec$annotation) &&
                     !is.null(spec$operator) &&
@@ -326,6 +332,12 @@ feature_filtering <- function(qfeatures, condition_specs) {
 #' @keywords internal
 #'
 apply_filter_operator <- function(values, operator, target) {
+    if (operator == "is_missing") {
+        return(is.na(values))
+    }
+    if (operator == "is_not_missing") {
+        return(!is.na(values))
+    }
     if (length(target) == 0) {
         return(rep(FALSE, length(values)))
     }
@@ -348,4 +360,12 @@ apply_filter_operator <- function(values, operator, target) {
         stop(paste0("Unsupported filtering operator: ", operator))
     }
     operator_functions[[operator]](values, target)
+}
+
+missingness_filter_operators <- function() {
+    c("is_missing", "is_not_missing")
+}
+
+is_missingness_filter_operator <- function(operator) {
+    operator %in% missingness_filter_operators()
 }

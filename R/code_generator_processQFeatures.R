@@ -369,7 +369,14 @@ codeGeneratorFiltering <- function(qf, condition, type, step_number) {
             for (i in 1:length(condition)) {
                 annotation <- as_r_string_literal(condition[[i]]$annotation)
                 if (condition[[i]]$annotation == ".qfeaturesgui_rowname") {
-                    if (condition[[i]]$operator == "==") {
+                    if (is_missingness_filter_operator(condition[[i]]$operator)) {
+                        build_condition <- if (condition[[i]]$operator == "is_missing") {
+                            "is.na(rownames(rowData(se)))"
+                        } else {
+                            "!is.na(rownames(rowData(se)))"
+                        }
+                        vector <- ""
+                    } else if (condition[[i]]$operator == "==") {
                         build_condition <- paste0("rownames(rowData(se)) %in% ")
                         vector <- as_r_vector_literal(condition[[i]]$value)
                     } else {
@@ -377,7 +384,14 @@ codeGeneratorFiltering <- function(qf, condition, type, step_number) {
                         vector <- paste0(as_r_vector_literal(condition[[i]]$value), ")")
                     }
                 } else {
-                    if (condition[[i]]$operator == "==") {
+                    if (is_missingness_filter_operator(condition[[i]]$operator)) {
+                        build_condition <- if (condition[[i]]$operator == "is_missing") {
+                            paste0("is.na(rowData(se)[[", annotation, "]])")
+                        } else {
+                            paste0("!is.na(rowData(se)[[", annotation, "]])")
+                        }
+                        vector <- ""
+                    } else if (condition[[i]]$operator == "==") {
                         build_condition <- paste0("rowData(se)[[", annotation, "]] %in% ")
                         vector <- as_r_vector_literal(condition[[i]]$value)
                     } else if (condition[[i]]$operator == "!=") {
@@ -418,7 +432,14 @@ for(i in 1:length(step%s_setNames)){
             for (i in 1:length(condition)) {
                 annotation <- as_r_string_literal(condition[[i]]$annotation)
                 if (condition[[i]]$annotation == ".qfeaturesgui_rowname") {
-                    if (condition[[i]]$operator == "==") {
+                    if (is_missingness_filter_operator(condition[[i]]$operator)) {
+                        build_condition <- if (condition[[i]]$operator == "is_missing") {
+                            "is.na(rownames(colData(se)))"
+                        } else {
+                            "!is.na(rownames(colData(se)))"
+                        }
+                        vector <- ""
+                    } else if (condition[[i]]$operator == "==") {
                         build_condition <- paste0("rownames(colData(se)) %in% ")
                         vector <- as_r_vector_literal(condition[[i]]$value)
                     } else {
@@ -426,7 +447,14 @@ for(i in 1:length(step%s_setNames)){
                         vector <- paste0(as_r_vector_literal(condition[[i]]$value), ")")
                     }
                 } else {
-                    if (condition[[i]]$operator == "==") {
+                    if (is_missingness_filter_operator(condition[[i]]$operator)) {
+                        build_condition <- if (condition[[i]]$operator == "is_missing") {
+                            paste0("is.na(colData(se)[[", annotation, "]])")
+                        } else {
+                            paste0("!is.na(colData(se)[[", annotation, "]])")
+                        }
+                        vector <- ""
+                    } else if (condition[[i]]$operator == "==") {
                         build_condition <- paste0("colData(se)[[", annotation, "]] %in% ")
                         vector <- as_r_vector_literal(condition[[i]]$value)
                     } else if (condition[[i]]$operator == "!=") {

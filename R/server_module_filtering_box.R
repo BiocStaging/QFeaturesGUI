@@ -24,7 +24,9 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             ">" = "is greater than",
             ">=" = "is greater than or equal to",
             "==" = "is equal to",
-            "!=" = "is not equal to"
+            "!=" = "is not equal to",
+            "is_missing" = "is missing",
+            "is_not_missing" = "is not missing"
         )
         operator_choices_all <- c(
             "Less than" = "<",
@@ -32,11 +34,15 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             "Greater than" = ">",
             "Greater than or equal to" = ">=",
             "Equal to" = "==",
-            "Not equal to" = "!="
+            "Not equal to" = "!=",
+            "Is missing" = "is_missing",
+            "Is not missing" = "is_not_missing"
         )
         operator_choices_categorical <- c(
             "Equal to" = "==",
-            "Not equal to" = "!="
+            "Not equal to" = "!=",
+            "Is missing" = "is_missing",
+            "Is not missing" = "is_not_missing"
         )
 
         combined_samples_annotations <- reactive({
@@ -142,6 +148,9 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             req(input$filter_operator)
             is_categorical <- annotations_type() %in% c("character", "factor")
             is_equality_operator <- input$filter_operator %in% c("==", "!=")
+            if (is_missingness_filter_operator(input$filter_operator)) {
+                return(FALSE)
+            }
             if (!(is_categorical && is_equality_operator)) {
                 return(FALSE)
             }
@@ -153,6 +162,10 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             state_filter_value <- shiny::isolate(input[[paste0("filter_ui_", type)]])
             if (is.null(state_filter_value) && !is.null(state)) {
                 state_filter_value <- state$filter_value
+            }
+            req(input$filter_operator)
+            if (is_missingness_filter_operator(input$filter_operator)) {
+                return(NULL)
             }
             is_categorical <- annotations_type() %in% c("character", "factor")
             is_equality_operator <- input$filter_operator %in% c("==", "!=")
@@ -204,6 +217,9 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             req(input$annotation_selection)
             req(input$filter_operator)
             req(annotations_type())
+            if (is_missingness_filter_operator(input$filter_operator)) {
+                return()
+            }
             is_categorical <- annotations_type() %in% c("character", "factor")
             if (!is_categorical) {
                 return()
@@ -271,6 +287,12 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             } else {
                 input$annotation_selection
             }
+            if (is_missingness_filter_operator(input$filter_operator)) {
+                return(paste(
+                    annotation_label,
+                    operator_labels[[input$filter_operator]]
+                ))
+            }
             if (annotations_type() %in% c("character", "factor") &&
                 input$filter_operator %in% c("==", "!=")) {
                 selected_values <- as.character(input[[paste0("filter_ui_", type)]])
@@ -299,6 +321,13 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             req(input$annotation_selection)
             req(input$filter_operator)
             req(input$filter_operator %in% names(operator_labels))
+            if (is_missingness_filter_operator(input$filter_operator)) {
+                return(list(
+                    annotation = input$annotation_selection,
+                    operator = input$filter_operator,
+                    value = NULL
+                ))
+            }
             filter_value <- input[[paste0("filter_ui_", type)]]
             if (is.null(filter_value) || is_empty_categorical_multiselect()) {
                 return(NULL)
@@ -386,6 +415,14 @@ server_module_annotation_plot <- function(
             req(annotation_values())
             selected_operator <- filter_operator()
             req(selected_operator)
+            if (is_missingness_filter_operator(selected_operator)) {
+                condition_mask <- apply_filter_operator(
+                    values = annotation_values(),
+                    operator = selected_operator,
+                    target = NULL
+                )
+                return(condition_mask[condition_mask])
+            }
             condition_mask <- apply_filter_operator(
                 values = annotation_values(),
                 operator = selected_operator,
@@ -395,7 +432,17 @@ server_module_annotation_plot <- function(
             annotation_values()[condition_mask]
         })
         output$plot <- renderPlotly({
-            annotation <- annotation_values()
+            selected_operator <- filter_operator()
+            req(selected_operator)
+            if (is_missingness_filter_operator(selected_operator)) {
+                annotation <- apply_filter_operator(
+                    values = annotation_values(),
+                    operator = selected_operator,
+                    target = NULL
+                )
+            } else {
+                annotation <- annotation_values()
+            }
             filtered <- filtered_annotation()
             selected <- selected_annotation()
 
@@ -412,6 +459,13 @@ server_module_annotation_plot <- function(
                 "Rowname"
             } else {
                 selected
+            }
+            if (is_missingness_filter_operator(selected_operator)) {
+                annotation_label <- paste0(
+                    "Missingness (",
+                    annotation_label,
+                    ")"
+                )
             }
 
             error_handler(
