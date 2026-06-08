@@ -69,7 +69,7 @@ test_that("check_qfeatures validates objects and RDS paths", {
     saveRDS(data.frame(x = 1), bad_path)
     expect_error(
         check_qfeatures(bad_path),
-        "must be a QFeatures object"
+        "RDS file does not contain a QFeatures object"
     )
 })
 
