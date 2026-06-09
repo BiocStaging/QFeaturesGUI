@@ -24,7 +24,9 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             ">" = "is greater than",
             ">=" = "is greater than or equal to",
             "==" = "is equal to",
-            "!=" = "is not equal to"
+            "!=" = "is not equal to",
+            "is_missing" = "is missing",
+            "is_not_missing" = "is not missing"
         )
         operator_choices_all <- c(
             "Less than" = "<",
@@ -32,11 +34,15 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             "Greater than" = ">",
             "Greater than or equal to" = ">=",
             "Equal to" = "==",
-            "Not equal to" = "!="
+            "Not equal to" = "!=",
+            "Is missing" = "is_missing",
+            "Is not missing" = "is_not_missing"
         )
         operator_choices_categorical <- c(
             "Equal to" = "==",
-            "Not equal to" = "!="
+            "Not equal to" = "!=",
+            "Is missing" = "is_missing",
+            "Is not missing" = "is_not_missing"
         )
 
         combined_samples_annotations <- reactive({
@@ -142,6 +148,9 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             req(input$filter_operator)
             is_categorical <- annotations_type() %in% c("character", "factor")
             is_equality_operator <- input$filter_operator %in% c("==", "!=")
+            if (is_missingness_filter_operator(input$filter_operator)) {
+                return(FALSE)
+            }
             if (!(is_categorical && is_equality_operator)) {
                 return(FALSE)
             }
@@ -153,6 +162,10 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             state_filter_value <- shiny::isolate(input[[paste0("filter_ui_", type)]])
             if (is.null(state_filter_value) && !is.null(state)) {
                 state_filter_value <- state$filter_value
+            }
+            req(input$filter_operator)
+            if (is_missingness_filter_operator(input$filter_operator)) {
+                return(NULL)
             }
             is_categorical <- annotations_type() %in% c("character", "factor")
             is_equality_operator <- input$filter_operator %in% c("==", "!=")
@@ -204,6 +217,9 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             req(input$annotation_selection)
             req(input$filter_operator)
             req(annotations_type())
+            if (is_missingness_filter_operator(input$filter_operator)) {
+                return()
+            }
             is_categorical <- annotations_type() %in% c("character", "factor")
             if (!is_categorical) {
                 return()
@@ -271,6 +287,12 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             } else {
                 input$annotation_selection
             }
+            if (is_missingness_filter_operator(input$filter_operator)) {
+                return(paste(
+                    annotation_label,
+                    operator_labels[[input$filter_operator]]
+                ))
+            }
             if (annotations_type() %in% c("character", "factor") &&
                 input$filter_operator %in% c("==", "!=")) {
                 selected_values <- as.character(input[[paste0("filter_ui_", type)]])
@@ -299,6 +321,13 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
             req(input$annotation_selection)
             req(input$filter_operator)
             req(input$filter_operator %in% names(operator_labels))
+            if (is_missingness_filter_operator(input$filter_operator)) {
+                return(list(
+                    annotation = input$annotation_selection,
+                    operator = input$filter_operator,
+                    value = NULL
+                ))
+            }
             filter_value <- input[[paste0("filter_ui_", type)]]
             if (is.null(filter_value) || is_empty_categorical_multiselect()) {
                 return(NULL)
@@ -386,6 +415,18 @@ server_module_annotation_plot <- function(
             req(annotation_values())
             selected_operator <- filter_operator()
             req(selected_operator)
+            if (is_missingness_filter_operator(selected_operator)) {
+                condition_mask <- apply_filter_operator(
+                    values = annotation_values(),
+                    operator = selected_operator,
+                    target = NULL
+                )
+                plot_values <- missingness_filter_plot_values(
+                    values = annotation_values(),
+                    operator = selected_operator
+                )
+                return(plot_values[condition_mask])
+            }
             condition_mask <- apply_filter_operator(
                 values = annotation_values(),
                 operator = selected_operator,
@@ -395,7 +436,16 @@ server_module_annotation_plot <- function(
             annotation_values()[condition_mask]
         })
         output$plot <- renderPlotly({
-            annotation <- annotation_values()
+            selected_operator <- filter_operator()
+            req(selected_operator)
+            if (is_missingness_filter_operator(selected_operator)) {
+                annotation <- missingness_filter_plot_values(
+                    values = annotation_values(),
+                    operator = selected_operator
+                )
+            } else {
+                annotation <- annotation_values()
+            }
             filtered <- filtered_annotation()
             selected <- selected_annotation()
 
@@ -413,6 +463,21 @@ server_module_annotation_plot <- function(
             } else {
                 selected
             }
+            if (is_missingness_filter_operator(selected_operator)) {
+                operator_label <- if (selected_operator == "is_missing") {
+                    "Is missing"
+                } else {
+                    "Is not missing"
+                }
+                return(error_handler(
+                    missingness_annotation_plot_wrapper,
+                    component_name = "annotation_plot (filtering_box)",
+                    annotation = annotation,
+                    filtered_annotation = filtered,
+                    assay_name = plot_title,
+                    annotation_name = paste0(operator_label, " (", annotation_label, ")")
+                ))
+            }
 
             error_handler(
                 annotation_plot_wrapper,
@@ -424,6 +489,72 @@ server_module_annotation_plot <- function(
             )
         })
     })
+}
+
+missingness_filter_plot_values <- function(values, operator) {
+    condition_mask <- apply_filter_operator(
+        values = values,
+        operator = operator,
+        target = NULL
+    )
+    if (operator == "is_missing") {
+        false_label <- "Is not missing"
+        true_label <- "Is missing"
+    } else if (operator == "is_not_missing") {
+        false_label <- "Is missing"
+        true_label <- "Is not missing"
+    } else {
+        stop(paste0("Unsupported missingness operator: ", operator))
+    }
+    factor(
+        ifelse(condition_mask, true_label, false_label),
+        levels = c(false_label, true_label)
+    )
+}
+
+missingness_annotation_plot_wrapper <- function(
+      annotation,
+      filtered_annotation,
+      assay_name,
+      annotation_name
+) {
+    categories <- levels(annotation)
+    annotation <- factor(annotation, levels = categories)
+    before_counts <- as.integer(table(annotation))
+
+    plot <- plot_ly() %>%
+        plotly::add_trace(
+            x = categories,
+            y = before_counts,
+            type = "bar",
+            name = "Before Filtering"
+        ) %>%
+        layout(
+            barmode = "group",
+            xaxis = list(title = paste0("Filter Result: ", annotation_name)),
+            yaxis = list(title = "Number of appearances"),
+            title = assay_name
+        ) %>%
+        config(displaylogo = FALSE, toImageButtonOptions = list(
+            format = "svg",
+            filename = "annotation_plot",
+            height = 500,
+            width = 700,
+            scale = 1
+        ))
+
+    if (length(filtered_annotation) > 0) {
+        filtered_annotation <- factor(filtered_annotation, levels = categories)
+        after_counts <- as.integer(table(filtered_annotation))
+        plot <- plot %>%
+            plotly::add_trace(
+                x = categories,
+                y = after_counts,
+                type = "bar",
+                name = "After Filtering"
+            )
+    }
+    plot
 }
 
 #' @title Annotation plot wrapper
