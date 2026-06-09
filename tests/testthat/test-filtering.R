@@ -138,3 +138,48 @@ test_that("codeGeneratorFiltering emits is.na conditions", {
         fixed = TRUE
     ))
 })
+
+test_that("missingness plot values explain TRUE and FALSE labels", {
+    values <- c("a", NA, "b")
+
+    is_missing_values <- missingness_filter_plot_values(values, "is_missing")
+    is_not_missing_values <- missingness_filter_plot_values(
+        values,
+        "is_not_missing"
+    )
+
+    expect_equal(
+        levels(is_missing_values),
+        c("Is not missing", "Is missing")
+    )
+    expect_equal(
+        as.character(is_missing_values),
+        c("Is not missing", "Is missing", "Is not missing")
+    )
+    expect_equal(
+        levels(is_not_missing_values),
+        c("Is missing", "Is not missing")
+    )
+    expect_equal(
+        as.character(is_not_missing_values),
+        c("Is not missing", "Is missing", "Is not missing")
+    )
+})
+
+test_that("missingness plot renders when all values are FALSE", {
+    annotation <- missingness_filter_plot_values(c("a", "b"), "is_missing")
+    plot <- missingness_annotation_plot_wrapper(
+        annotation = annotation,
+        filtered_annotation = annotation[FALSE],
+        assay_name = "All samples across sets",
+        annotation_name = "Is missing (condition)"
+    )
+    built <- plotly::plotly_build(plot)
+
+    expect_s3_class(plot, "plotly")
+    expect_equal(
+        as.vector(built$x$data[[1]]$x),
+        c("Is not missing", "Is missing")
+    )
+    expect_equal(as.vector(built$x$data[[1]]$y), c(2L, 0L))
+})

@@ -421,7 +421,11 @@ server_module_annotation_plot <- function(
                     operator = selected_operator,
                     target = NULL
                 )
-                return(condition_mask[condition_mask])
+                plot_values <- missingness_filter_plot_values(
+                    values = annotation_values(),
+                    operator = selected_operator
+                )
+                return(plot_values[condition_mask])
             }
             condition_mask <- apply_filter_operator(
                 values = annotation_values(),
@@ -435,10 +439,9 @@ server_module_annotation_plot <- function(
             selected_operator <- filter_operator()
             req(selected_operator)
             if (is_missingness_filter_operator(selected_operator)) {
-                annotation <- apply_filter_operator(
+                annotation <- missingness_filter_plot_values(
                     values = annotation_values(),
-                    operator = selected_operator,
-                    target = NULL
+                    operator = selected_operator
                 )
             } else {
                 annotation <- annotation_values()
@@ -461,11 +464,19 @@ server_module_annotation_plot <- function(
                 selected
             }
             if (is_missingness_filter_operator(selected_operator)) {
-                annotation_label <- paste0(
-                    "Missingness (",
-                    annotation_label,
-                    ")"
-                )
+                operator_label <- if (selected_operator == "is_missing") {
+                    "Is missing"
+                } else {
+                    "Is not missing"
+                }
+                return(error_handler(
+                    missingness_annotation_plot_wrapper,
+                    component_name = "annotation_plot (filtering_box)",
+                    annotation = annotation,
+                    filtered_annotation = filtered,
+                    assay_name = plot_title,
+                    annotation_name = paste0(operator_label, " (", annotation_label, ")")
+                ))
             }
 
             error_handler(
@@ -478,6 +489,72 @@ server_module_annotation_plot <- function(
             )
         })
     })
+}
+
+missingness_filter_plot_values <- function(values, operator) {
+    condition_mask <- apply_filter_operator(
+        values = values,
+        operator = operator,
+        target = NULL
+    )
+    if (operator == "is_missing") {
+        false_label <- "Is not missing"
+        true_label <- "Is missing"
+    } else if (operator == "is_not_missing") {
+        false_label <- "Is missing"
+        true_label <- "Is not missing"
+    } else {
+        stop(paste0("Unsupported missingness operator: ", operator))
+    }
+    factor(
+        ifelse(condition_mask, true_label, false_label),
+        levels = c(false_label, true_label)
+    )
+}
+
+missingness_annotation_plot_wrapper <- function(
+      annotation,
+      filtered_annotation,
+      assay_name,
+      annotation_name
+) {
+    categories <- levels(annotation)
+    annotation <- factor(annotation, levels = categories)
+    before_counts <- as.integer(table(annotation))
+
+    plot <- plot_ly() %>%
+        plotly::add_trace(
+            x = categories,
+            y = before_counts,
+            type = "bar",
+            name = "Before Filtering"
+        ) %>%
+        layout(
+            barmode = "group",
+            xaxis = list(title = paste0("Filter Result: ", annotation_name)),
+            yaxis = list(title = "Number of appearances"),
+            title = assay_name
+        ) %>%
+        config(displaylogo = FALSE, toImageButtonOptions = list(
+            format = "svg",
+            filename = "annotation_plot",
+            height = 500,
+            width = 700,
+            scale = 1
+        ))
+
+    if (length(filtered_annotation) > 0) {
+        filtered_annotation <- factor(filtered_annotation, levels = categories)
+        after_counts <- as.integer(table(filtered_annotation))
+        plot <- plot %>%
+            plotly::add_trace(
+                x = categories,
+                y = after_counts,
+                type = "bar",
+                name = "After Filtering"
+            )
+    }
+    plot
 }
 
 #' @title Annotation plot wrapper
