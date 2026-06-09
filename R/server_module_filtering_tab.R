@@ -346,7 +346,7 @@ apply_filter_operator <- function(values, operator, target) {
         if (operator == "==") {
             return(values %in% target_values)
         }
-        return(!(values %in% target_values))
+        return(!is.na(values) & !(values %in% target_values))
     }
     operator_functions <- list(
         "==" = `==`,

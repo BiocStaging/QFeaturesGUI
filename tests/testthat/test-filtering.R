@@ -14,6 +14,10 @@ test_that("apply_filter_operator supports missingness operators", {
         c(TRUE, NA, FALSE, NA)
     )
     expect_equal(
+        apply_filter_operator(values, "!=", c("a", "c")),
+        c(FALSE, FALSE, TRUE, FALSE)
+    )
+    expect_equal(
         apply_filter_operator(c(1, 2, NA), ">=", 2),
         c(FALSE, TRUE, NA)
     )
@@ -108,6 +112,11 @@ test_that("codeGeneratorFiltering emits is.na conditions", {
                 value = NULL
             ),
             list(
+                annotation = "batch",
+                operator = "!=",
+                value = "A"
+            ),
+            list(
                 annotation = "sample_score",
                 operator = ">=",
                 value = 2
@@ -123,12 +132,17 @@ test_that("codeGeneratorFiltering emits is.na conditions", {
         fixed = TRUE
     ))
     expect_true(grepl(
-        ' & !(rowData(se)[["protein"]] %in% c("P1"))',
+        ' & !is.na(rowData(se)[["protein"]]) & !(rowData(se)[["protein"]] %in% c("P1"))',
         feature_code,
         fixed = TRUE
     ))
     expect_true(grepl(
         '!is.na(colData(se)[["condition"]])',
+        sample_code,
+        fixed = TRUE
+    ))
+    expect_true(grepl(
+        ' & !is.na(colData(se)[["batch"]]) & !(colData(se)[["batch"]] %in% c("A"))',
         sample_code,
         fixed = TRUE
     ))
