@@ -1,4 +1,1 @@
-library(testthat)
-library(QFeaturesGUI)
-
-test_check("QFeaturesGUI")
+shinytest2::test_app()

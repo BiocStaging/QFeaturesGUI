@@ -1,0 +1,95 @@
+library(shinytest2)
+
+test_that("{shinytest2}: twoTable_importQFeatures", {
+  testthat::skip_on_cran()
+
+  data("inputTable", package = "QFeaturesGUI")
+  data("sampleTable", package = "QFeaturesGUI")
+
+  appObject <- QFeaturesGUI::importQFeatures(
+    colData = sampleTable,
+    assayData = inputTable
+  )
+
+  app <- AppDriver$new(
+    appObject,
+    name = "twoTable_importQFeatures",
+    height = 1080,
+    width = 1619
+  )
+
+  app$wait_for_idle()
+
+  app$set_inputs(`readqfeatures-run_col` = "Raw.file")
+  app$set_inputs(`readqfeatures-removeEmptyCols` = TRUE)
+  app$set_inputs(`readqfeatures-singlecell` = TRUE)
+  app$click("readqfeatures-convert")
+
+  app$wait_for_idle()
+
+  download <- app$get_download("readqfeatures-downloadQFeatures")
+  testthat::expect_true(file.exists(download))
+  testthat::expect_setequal(
+    utils::unzip(download, list = TRUE)$Name,
+    c(
+      "importQFeatures_QFeatures_object.rds",
+      "importQFeatures_sessionInfo.html",
+      "importQFeatures_script.R"
+    )
+  )
+
+  extract_dir <- tempfile("qfeatures-download-")
+  dir.create(extract_dir)
+  utils::unzip(
+    download,
+    files = "importQFeatures_QFeatures_object.rds",
+    exdir = extract_dir
+  )
+
+  exported <- readRDS(file.path(
+    extract_dir,
+    "importQFeatures_QFeatures_object.rds"
+  ))
+
+  expected <- QFeatures::readQFeatures(
+    assayData = inputTable,
+    colData = sampleTable,
+    runCol = "Raw.file",
+    quantCols = NULL,
+    removeEmptyCols = TRUE,
+    verbose = FALSE
+  )
+  expected <- QFeatures::zeroIsNA(expected, i = seq_along(expected))
+  for (i in seq_along(expected)) {
+    expected[[i]] <- QFeatures::logTransform(expected[[i]], base = 2)
+  }
+  expected <- QFeatures::setQFeaturesType(expected, type = "scp")
+  names(expected) <- paste0(names(expected), "_initial_import")
+
+  ordered_col_data <- function(object) {
+    col_data <- as.data.frame(SummarizedExperiment::colData(object))
+    col_data[order(rownames(col_data)), , drop = FALSE]
+  }
+
+  testthat::expect_equal(
+    QFeatures::getQFeaturesType(exported),
+    QFeatures::getQFeaturesType(expected)
+  )
+  testthat::expect_setequal(names(exported), names(expected))
+  testthat::expect_equal(ordered_col_data(exported), ordered_col_data(expected))
+
+  for (assay_name in sort(names(expected))) {
+    testthat::expect_equal(
+      SummarizedExperiment::assay(exported[[assay_name]]),
+      SummarizedExperiment::assay(expected[[assay_name]])
+    )
+    testthat::expect_equal(
+      as.data.frame(SummarizedExperiment::rowData(exported[[assay_name]])),
+      as.data.frame(SummarizedExperiment::rowData(expected[[assay_name]]))
+    )
+    testthat::expect_equal(
+      as.data.frame(SummarizedExperiment::colData(exported[[assay_name]])),
+      as.data.frame(SummarizedExperiment::colData(expected[[assay_name]]))
+    )
+  }
+})
