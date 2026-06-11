@@ -42,7 +42,10 @@ test_that("{shinytest2}: twoTable_importQFeatures", {
   dir.create(extract_dir)
   utils::unzip(
     download,
-    files = "importQFeatures_QFeatures_object.rds",
+    files = c(
+      "importQFeatures_QFeatures_object.rds",
+      "importQFeatures_script.R"
+    ),
     exdir = extract_dir
   )
 
@@ -71,25 +74,42 @@ test_that("{shinytest2}: twoTable_importQFeatures", {
     col_data[order(rownames(col_data)), , drop = FALSE]
   }
 
-  testthat::expect_equal(
-    QFeatures::getQFeaturesType(exported),
-    QFeatures::getQFeaturesType(expected)
-  )
-  testthat::expect_setequal(names(exported), names(expected))
-  testthat::expect_equal(ordered_col_data(exported), ordered_col_data(expected))
+  expect_qfeatures_equal <- function(actual, expected) {
+    testthat::expect_equal(
+      QFeatures::getQFeaturesType(actual),
+      QFeatures::getQFeaturesType(expected)
+    )
+    testthat::expect_setequal(names(actual), names(expected))
+    testthat::expect_equal(ordered_col_data(actual), ordered_col_data(expected))
 
-  for (assay_name in sort(names(expected))) {
-    testthat::expect_equal(
-      SummarizedExperiment::assay(exported[[assay_name]]),
-      SummarizedExperiment::assay(expected[[assay_name]])
-    )
-    testthat::expect_equal(
-      as.data.frame(SummarizedExperiment::rowData(exported[[assay_name]])),
-      as.data.frame(SummarizedExperiment::rowData(expected[[assay_name]]))
-    )
-    testthat::expect_equal(
-      as.data.frame(SummarizedExperiment::colData(exported[[assay_name]])),
-      as.data.frame(SummarizedExperiment::colData(expected[[assay_name]]))
-    )
+    for (assay_name in sort(names(expected))) {
+      testthat::expect_equal(
+        SummarizedExperiment::assay(actual[[assay_name]]),
+        SummarizedExperiment::assay(expected[[assay_name]])
+      )
+      testthat::expect_equal(
+        as.data.frame(SummarizedExperiment::rowData(actual[[assay_name]])),
+        as.data.frame(SummarizedExperiment::rowData(expected[[assay_name]]))
+      )
+      testthat::expect_equal(
+        as.data.frame(SummarizedExperiment::colData(actual[[assay_name]])),
+        as.data.frame(SummarizedExperiment::colData(expected[[assay_name]]))
+      )
+    }
   }
+
+  expect_qfeatures_equal(exported, expected)
+
+  script_env <- new.env(parent = globalenv())
+  script_env$dataFrame1 <- inputTable
+  script_env$dataFrame2 <- sampleTable
+  suppressPackageStartupMessages(source(
+    file.path(extract_dir, "importQFeatures_script.R"),
+    local = script_env
+  ))
+
+  testthat::expect_true(exists("qfeatures", envir = script_env, inherits = FALSE))
+  script_qfeatures <- script_env$qfeatures
+
+  expect_qfeatures_equal(script_qfeatures, exported)
 })
