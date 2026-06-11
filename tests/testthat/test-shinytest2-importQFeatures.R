@@ -69,37 +69,7 @@ test_that("{shinytest2}: twoTable_importQFeatures", {
   expected <- QFeatures::setQFeaturesType(expected, type = "scp")
   names(expected) <- paste0(names(expected), "_initial_import")
 
-  ordered_col_data <- function(object) {
-    col_data <- as.data.frame(SummarizedExperiment::colData(object))
-    col_data[order(rownames(col_data)), , drop = FALSE]
-  }
-
-  expect_qfeatures_equal <- function(actual, expected) {
-    testthat::expect_equal(
-      QFeatures::getQFeaturesType(actual),
-      QFeatures::getQFeaturesType(expected)
-    )
-    testthat::expect_setequal(names(actual), names(expected))
-    testthat::expect_equal(ordered_col_data(actual), ordered_col_data(expected))
-
-    for (assay_name in sort(names(expected))) {
-      testthat::expect_equal(
-        SummarizedExperiment::assay(actual[[assay_name]]),
-        SummarizedExperiment::assay(expected[[assay_name]])
-      )
-      testthat::expect_equal(
-        as.data.frame(SummarizedExperiment::rowData(actual[[assay_name]])),
-        as.data.frame(SummarizedExperiment::rowData(expected[[assay_name]]))
-      )
-      testthat::expect_equal(
-        as.data.frame(SummarizedExperiment::colData(actual[[assay_name]])),
-        as.data.frame(SummarizedExperiment::colData(expected[[assay_name]]))
-      )
-    }
-  }
-
-  expect_qfeatures_equal(exported, expected)
-
+  expect_identical(object = exported, expected = expected)
   script_env <- new.env(parent = globalenv())
   script_env$dataFrame1 <- inputTable
   script_env$dataFrame2 <- sampleTable
@@ -111,7 +81,7 @@ test_that("{shinytest2}: twoTable_importQFeatures", {
   testthat::expect_true(exists("qfeatures", envir = script_env, inherits = FALSE))
   script_qfeatures <- script_env$qfeatures
 
-  expect_qfeatures_equal(script_qfeatures, exported)
+  expect_identical(object = script_qfeatures, expected = expected)
 })
 
 test_that("{shinytest2}: oneTable_importQFeatures", {
@@ -178,37 +148,7 @@ test_that("{shinytest2}: oneTable_importQFeatures", {
   )
   names(expected) <- paste0(names(expected), "_initial_import")
 
-  ordered_col_data <- function(object) {
-    col_data <- as.data.frame(SummarizedExperiment::colData(object))
-    col_data[order(rownames(col_data)), , drop = FALSE]
-  }
-
-  expect_qfeatures_equal <- function(actual, expected) {
-    testthat::expect_equal(
-      QFeatures::getQFeaturesType(actual),
-      QFeatures::getQFeaturesType(expected)
-    )
-    testthat::expect_setequal(names(actual), names(expected))
-    testthat::expect_equal(ordered_col_data(actual), ordered_col_data(expected))
-
-    for (assay_name in sort(names(expected))) {
-      testthat::expect_equal(
-        SummarizedExperiment::assay(actual[[assay_name]]),
-        SummarizedExperiment::assay(expected[[assay_name]])
-      )
-      testthat::expect_equal(
-        as.data.frame(SummarizedExperiment::rowData(actual[[assay_name]])),
-        as.data.frame(SummarizedExperiment::rowData(expected[[assay_name]]))
-      )
-      testthat::expect_equal(
-        as.data.frame(SummarizedExperiment::colData(actual[[assay_name]])),
-        as.data.frame(SummarizedExperiment::colData(expected[[assay_name]]))
-      )
-    }
-  }
-
-  expect_qfeatures_equal(exported, expected)
-
+  expect_identical(object = exported, expected = expected)
   script_env <- new.env(parent = globalenv())
   script_env$dataFrame1 <- inputTable
   script_env$dataFrame2 <- sampleTable
@@ -220,5 +160,5 @@ test_that("{shinytest2}: oneTable_importQFeatures", {
   testthat::expect_true(exists("qfeatures", envir = script_env, inherits = FALSE))
   script_qfeatures <- script_env$qfeatures
 
-  expect_qfeatures_equal(script_qfeatures, exported)
+  expect_identical(object = script_qfeatures, expected = expected)
 })
