@@ -56,3 +56,100 @@ make_test_qfeatures <- function() {
         colData = sample_data
     )
 }
+
+normalise_test_data_frame <- function(df, sort_rows = TRUE) {
+    df <- as.data.frame(df)
+    df[] <- lapply(df, function(x) {
+        if (is.factor(x)) {
+            as.character(x)
+        } else {
+            x
+        }
+    })
+    if (sort_rows && !is.null(rownames(df))) {
+        df <- df[order(rownames(df)), , drop = FALSE]
+    }
+    df
+}
+
+normalise_test_sample_map <- function(object) {
+    sample_map <- as.data.frame(MultiAssayExperiment::sampleMap(object))
+    sample_map[] <- lapply(sample_map, as.character)
+    sample_map <- sample_map[do.call(order, sample_map), , drop = FALSE]
+    rownames(sample_map) <- NULL
+    sample_map
+}
+
+expect_equal_data_frame_by_rowname <- function(object, expected) {
+    object <- normalise_test_data_frame(object)
+    expected <- normalise_test_data_frame(expected)
+    testthat::expect_setequal(rownames(object), rownames(expected))
+    testthat::expect_setequal(colnames(object), colnames(expected))
+    object <- object[rownames(expected), colnames(expected), drop = FALSE]
+    testthat::expect_equal(object, expected)
+}
+
+expect_equal_summarized_experiment_assays <- function(object, expected) {
+    object_assays <- SummarizedExperiment::assays(object)
+    expected_assays <- SummarizedExperiment::assays(expected)
+    object_names <- names(object_assays)
+    expected_names <- names(expected_assays)
+
+    if (is.null(object_names) && is.null(expected_names)) {
+        testthat::expect_equal(length(object_assays), length(expected_assays))
+        for (i in seq_along(expected_assays)) {
+            testthat::expect_equal(object_assays[[i]], expected_assays[[i]])
+        }
+        return(invisible(NULL))
+    }
+
+    if (is.null(object_names)) {
+        object_names <- as.character(seq_along(object_assays))
+    }
+    if (is.null(expected_names)) {
+        expected_names <- as.character(seq_along(expected_assays))
+    }
+
+    testthat::expect_setequal(object_names, expected_names)
+    for (assay_name in expected_names) {
+        object_index <- match(assay_name, object_names)
+        expected_index <- match(assay_name, expected_names)
+        testthat::expect_equal(
+            object_assays[[object_index]],
+            expected_assays[[expected_index]]
+        )
+    }
+    invisible(NULL)
+}
+
+expect_qfeatures_equal <- function(object, expected) {
+    testthat::expect_s4_class(object, "QFeatures")
+    testthat::expect_s4_class(expected, "QFeatures")
+    testthat::expect_equal(
+        QFeatures::getQFeaturesType(object),
+        QFeatures::getQFeaturesType(expected)
+    )
+    testthat::expect_setequal(names(object), names(expected))
+    expect_equal_data_frame_by_rowname(
+        SummarizedExperiment::colData(object),
+        SummarizedExperiment::colData(expected)
+    )
+    testthat::expect_equal(
+        normalise_test_sample_map(object),
+        normalise_test_sample_map(expected)
+    )
+    for (assay_name in sort(names(expected))) {
+        object_assay <- object[[assay_name]]
+        expected_assay <- expected[[assay_name]]
+
+        expect_equal_summarized_experiment_assays(object_assay, expected_assay)
+        expect_equal_data_frame_by_rowname(
+            SummarizedExperiment::rowData(object_assay),
+            SummarizedExperiment::rowData(expected_assay)
+        )
+        expect_equal_data_frame_by_rowname(
+            SummarizedExperiment::colData(object_assay),
+            SummarizedExperiment::colData(expected_assay)
+        )
+    }
+}

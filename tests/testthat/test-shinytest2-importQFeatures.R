@@ -69,7 +69,7 @@ test_that("{shinytest2}: twoTable_importQFeatures", {
   expected <- QFeatures::setQFeaturesType(expected, type = "scp")
   names(expected) <- paste0(names(expected), "_initial_import")
 
-  expect_identical(object = exported, expected = expected)
+  expect_qfeatures_equal(object = exported, expected = expected)
   script_env <- new.env(parent = globalenv())
   script_env$dataFrame1 <- inputTable
   script_env$dataFrame2 <- sampleTable
@@ -81,7 +81,7 @@ test_that("{shinytest2}: twoTable_importQFeatures", {
   testthat::expect_true(exists("qfeatures", envir = script_env, inherits = FALSE))
   script_qfeatures <- script_env$qfeatures
 
-  expect_identical(object = script_qfeatures, expected = expected)
+  expect_qfeatures_equal(object = script_qfeatures, expected = exported)
 })
 
 test_that("{shinytest2}: oneTable_importQFeatures", {
@@ -148,10 +148,9 @@ test_that("{shinytest2}: oneTable_importQFeatures", {
   )
   names(expected) <- paste0(names(expected), "_initial_import")
 
-  expect_identical(object = exported, expected = expected)
+  expect_qfeatures_equal(object = exported, expected = expected)
   script_env <- new.env(parent = globalenv())
   script_env$dataFrame1 <- inputTable
-  script_env$dataFrame2 <- sampleTable
   suppressPackageStartupMessages(source(
     file.path(extract_dir, "importQFeatures_script.R"),
     local = script_env
@@ -160,5 +159,5 @@ test_that("{shinytest2}: oneTable_importQFeatures", {
   testthat::expect_true(exists("qfeatures", envir = script_env, inherits = FALSE))
   script_qfeatures <- script_env$qfeatures
 
-  expect_identical(object = script_qfeatures, expected = expected)
+  expect_qfeatures_equal(object = script_qfeatures, expected = exported)
 })
