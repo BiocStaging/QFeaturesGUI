@@ -68,21 +68,19 @@
 #' if (interactive()) {
 #'     shiny::runApp(app)
 #' }
-processQFeatures <- function(
-      qfeatures = NULL,
-      initialSets = NULL,
-      prefilledSteps = c(
-          "sampleFiltering",
-          "featureFiltering",
-          "missingValuesFeatures",
-          "missingValuesSamples",
-          "normalisation",
-          "aggregation",
-          "join",
-          "aggregation"
-      ),
-      maxSize = 100
-) {
+processQFeatures <- function(qfeatures = NULL,
+    initialSets = NULL,
+    prefilledSteps = c(
+        "sampleFiltering",
+        "featureFiltering",
+        "missingValuesFeatures",
+        "missingValuesSamples",
+        "normalisation",
+        "aggregation",
+        "join",
+        "aggregation"
+    ),
+    maxSize = 100) {
     qfeatures_missing <- missing(qfeatures) || is.null(qfeatures)
     initial_steps <- check_prefilled_steps(prefilledSteps)
 

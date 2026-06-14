@@ -1316,8 +1316,10 @@ annotation_cols <- function(x, what) {
 #' @importFrom MsCoreUtils robustSummary medianPolish
 #' @importFrom waiter Waiter spin_fading_circles
 #'
-aggregation_qfeatures <- function(qfeatures, method,
-    fcol) {
+aggregation_qfeatures <- function(
+      qfeatures, method,
+      fcol
+) {
     n <- length(qfeatures)
     caption <- if (n > 0L) {
         paste0("Aggregation of 1/", n, " sets")

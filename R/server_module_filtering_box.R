@@ -369,14 +369,12 @@ server_module_filtering_box <- function(id, assays_to_process, type, state) {
 #' @importFrom shiny moduleServer observe req eventReactive reactive
 #' @importFrom plotly plot_ly renderPlotly
 #'
-server_module_annotation_plot <- function(
-      id,
-      assays_to_process,
-      type,
-      filter_value,
-      selected_annotation,
-      filter_operator
-) {
+server_module_annotation_plot <- function(id,
+    assays_to_process,
+    type,
+    filter_value,
+    selected_annotation,
+    filter_operator) {
     moduleServer(id, function(input, output, session) {
         rowname_selector_key <- ".qfeaturesgui_rowname"
 
@@ -512,12 +510,10 @@ missingness_filter_plot_values <- function(values, operator) {
     )
 }
 
-missingness_annotation_plot_wrapper <- function(
-      annotation,
-      filtered_annotation,
-      assay_name,
-      annotation_name
-) {
+missingness_annotation_plot_wrapper <- function(annotation,
+    filtered_annotation,
+    assay_name,
+    annotation_name) {
     categories <- levels(annotation)
     annotation <- factor(annotation, levels = categories)
     before_counts <- as.integer(table(annotation))
@@ -569,12 +565,10 @@ missingness_annotation_plot_wrapper <- function(
 #'
 #' @importFrom plotly plot_ly config %>% add_histogram layout add_annotations
 #'
-annotation_plot_wrapper <- function(
-      annotation,
-      filtered_annotation,
-      assay_name,
-      annotation_name
-) {
+annotation_plot_wrapper <- function(annotation,
+    filtered_annotation,
+    assay_name,
+    annotation_name) {
     if (all(is.na(annotation))) {
         plot <- plot_ly(
             x = numeric(0),

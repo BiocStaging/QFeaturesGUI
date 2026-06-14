@@ -12,13 +12,11 @@
 #' @importFrom shiny moduleServer eventReactive observeEvent renderUI reactiveValues observe NS reactive req reactiveVal icon
 #' @importFrom htmltools tags
 #' @importFrom shinydashboard renderInfoBox infoBox
-server_module_filtering_tab <- function(
-      id,
-      step_number,
-      step_rv,
-      parent_rv,
-      type = c("samples", "features")
-) {
+server_module_filtering_tab <- function(id,
+    step_number,
+    step_rv,
+    parent_rv,
+    type = c("samples", "features")) {
     type <- match.arg(type)
 
     moduleServer(id, function(input, output, session) {

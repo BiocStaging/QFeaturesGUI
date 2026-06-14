@@ -126,8 +126,8 @@ expect_qfeatures_equal <- function(object, expected) {
     testthat::expect_s4_class(object, "QFeatures")
     testthat::expect_s4_class(expected, "QFeatures")
     testthat::expect_equal(
-        QFeatures::getQFeaturesType(object),
-        QFeatures::getQFeaturesType(expected)
+        suppressMessages(QFeatures::getQFeaturesType(object)),
+        suppressMessages(QFeatures::getQFeaturesType(expected))
     )
     testthat::expect_setequal(names(object), names(expected))
     expect_equal_data_frame_by_rowname(
