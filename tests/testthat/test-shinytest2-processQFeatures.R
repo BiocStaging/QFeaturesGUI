@@ -314,7 +314,15 @@ test_that("{shinytest2}: featureFiltering exports the expected QFeatures object"
     wait_for_process_input(app, "featureFiltering_1_v1-filtering_1-annotation_selection")
     app$set_inputs(`featureFiltering_1_v1-filtering_1-annotation_selection` = "feature_class")
     app$set_inputs(`featureFiltering_1_v1-filtering_1-filter_operator` = "is_not_missing")
+    app$wait_for_js(
+        "window.Shiny && Shiny.shinyapp && Shiny.shinyapp.$inputValues['featureFiltering_1_v1-filtering_1-filter_operator'] === 'is_not_missing'",
+        timeout = 10000
+    )
     app$click("featureFiltering_1_v1-apply_filters")
+    app$wait_for_js(
+        "(() => { const el = document.getElementById('featureFiltering_1_v1-number_features_removed'); return el && /(^|\\D)2(\\D|$)/.test(el.textContent); })()",
+        timeout = 10000
+    )
     app$click("featureFiltering_1_v1-export")
 
     processed <- qf
