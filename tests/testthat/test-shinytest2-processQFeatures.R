@@ -303,12 +303,17 @@ test_that("{shinytest2}: sampleFiltering exports the expected QFeatures object",
     app$click("sampleFiltering_1_v1-add_box")
     wait_for_process_input(app, "sampleFiltering_1_v1-filtering_1-annotation_selection")
     app$set_inputs(`sampleFiltering_1_v1-filtering_1-annotation_selection` = "condition")
-    app$set_inputs(`sampleFiltering_1_v1-filtering_1-filter_operator` = "is_not_missing")
     wait_for_process_input_value(
         app,
         "sampleFiltering_1_v1-filtering_1-annotation_selection",
         "condition"
     )
+    wait_for_process_input_value(
+        app,
+        "sampleFiltering_1_v1-filtering_1-filter_operator",
+        "=="
+    )
+    app$set_inputs(`sampleFiltering_1_v1-filtering_1-filter_operator` = "is_not_missing")
     wait_for_process_input_value(
         app,
         "sampleFiltering_1_v1-filtering_1-filter_operator",
@@ -346,12 +351,17 @@ test_that("{shinytest2}: featureFiltering exports the expected QFeatures object"
     app$click("featureFiltering_1_v1-add_box")
     wait_for_process_input(app, "featureFiltering_1_v1-filtering_1-annotation_selection")
     app$set_inputs(`featureFiltering_1_v1-filtering_1-annotation_selection` = "feature_class")
-    app$set_inputs(`featureFiltering_1_v1-filtering_1-filter_operator` = "is_not_missing")
     wait_for_process_input_value(
         app,
         "featureFiltering_1_v1-filtering_1-annotation_selection",
         "feature_class"
     )
+    wait_for_process_input_value(
+        app,
+        "featureFiltering_1_v1-filtering_1-filter_operator",
+        "=="
+    )
+    app$set_inputs(`featureFiltering_1_v1-filtering_1-filter_operator` = "is_not_missing")
     wait_for_process_input_value(
         app,
         "featureFiltering_1_v1-filtering_1-filter_operator",
