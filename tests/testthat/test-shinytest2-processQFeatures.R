@@ -1,5 +1,9 @@
 library(shinytest2)
 
+js_string <- function(value) {
+    paste0('"', gsub('(["\\\\])', "\\\\\\1", value), '"')
+}
+
 wait_for_process_input <- function(app, id, timeout = 10000) {
     app$wait_for_js(
         sprintf(
@@ -17,6 +21,28 @@ wait_for_process_step <- function(app, step_number, timeout = 30000) {
         timeout = timeout
     )
     app$click(selector = selector)
+}
+
+wait_for_process_input_value <- function(app, id, value, timeout = 30000) {
+    app$wait_for_js(
+        sprintf(
+            "window.Shiny && Shiny.shinyapp && Shiny.shinyapp.$inputValues[%s] === %s",
+            js_string(id),
+            js_string(value)
+        ),
+        timeout = timeout
+    )
+}
+
+wait_for_process_output_number <- function(app, id, value, timeout = 30000) {
+    app$wait_for_js(
+        sprintf(
+            "(() => { const el = document.getElementById(%s); if (!el) return false; const matches = (el.textContent || '').match(/-?\\d+(\\.\\d+)?/g) || []; return matches.includes(%s); })()",
+            js_string(id),
+            js_string(as.character(value))
+        ),
+        timeout = timeout
+    )
 }
 
 download_process_qfeatures <- function(app) {
@@ -155,8 +181,8 @@ test_that("{shinytest2} recording: processQFeatures", {
     app$click(selector = "a[data-value=\"step_5\"]")
     app$set_inputs(`missingValuesFeatures_5_v1-threshold_features` = 0.75)
     app$click("missingValuesFeatures_5_v1-export")
-    app$wait_for_js("document.getElementById('missingValuesSamples_6_v1-export') !== null", timeout = 10000)
-    app$click(selector = "a[data-value=\"step_6\"]")
+    wait_for_process_step(app, 6)
+    app$wait_for_js("document.getElementById('missingValuesSamples_6_v1-export') !== null", timeout = 30000)
     app$set_inputs(`missingValuesSamples_6_v1-threshold_samples` = 0.5)
     app$click("missingValuesSamples_6_v1-export")
     app$wait_for_js("document.getElementById('normalisation_7_v1-apply_normalisation') !== null", timeout = 10000)
@@ -278,14 +304,21 @@ test_that("{shinytest2}: sampleFiltering exports the expected QFeatures object",
     wait_for_process_input(app, "sampleFiltering_1_v1-filtering_1-annotation_selection")
     app$set_inputs(`sampleFiltering_1_v1-filtering_1-annotation_selection` = "condition")
     app$set_inputs(`sampleFiltering_1_v1-filtering_1-filter_operator` = "is_not_missing")
-    app$wait_for_js(
-        "window.Shiny && Shiny.shinyapp && Shiny.shinyapp.$inputValues['sampleFiltering_1_v1-filtering_1-filter_operator'] === 'is_not_missing'",
-        timeout = 10000
+    wait_for_process_input_value(
+        app,
+        "sampleFiltering_1_v1-filtering_1-annotation_selection",
+        "condition"
+    )
+    wait_for_process_input_value(
+        app,
+        "sampleFiltering_1_v1-filtering_1-filter_operator",
+        "is_not_missing"
     )
     app$click("sampleFiltering_1_v1-apply_filters")
-    app$wait_for_js(
-        "(() => { const el = document.getElementById('sampleFiltering_1_v1-number_samples_removed'); return el && /1/.test(el.textContent); })()",
-        timeout = 10000
+    wait_for_process_output_number(
+        app,
+        "sampleFiltering_1_v1-number_samples_removed",
+        1
     )
     app$click("sampleFiltering_1_v1-export")
 
@@ -314,14 +347,21 @@ test_that("{shinytest2}: featureFiltering exports the expected QFeatures object"
     wait_for_process_input(app, "featureFiltering_1_v1-filtering_1-annotation_selection")
     app$set_inputs(`featureFiltering_1_v1-filtering_1-annotation_selection` = "feature_class")
     app$set_inputs(`featureFiltering_1_v1-filtering_1-filter_operator` = "is_not_missing")
-    app$wait_for_js(
-        "window.Shiny && Shiny.shinyapp && Shiny.shinyapp.$inputValues['featureFiltering_1_v1-filtering_1-filter_operator'] === 'is_not_missing'",
-        timeout = 10000
+    wait_for_process_input_value(
+        app,
+        "featureFiltering_1_v1-filtering_1-annotation_selection",
+        "feature_class"
+    )
+    wait_for_process_input_value(
+        app,
+        "featureFiltering_1_v1-filtering_1-filter_operator",
+        "is_not_missing"
     )
     app$click("featureFiltering_1_v1-apply_filters")
-    app$wait_for_js(
-        "(() => { const el = document.getElementById('featureFiltering_1_v1-number_features_removed'); return el && /(^|\\D)2(\\D|$)/.test(el.textContent); })()",
-        timeout = 10000
+    wait_for_process_output_number(
+        app,
+        "featureFiltering_1_v1-number_features_removed",
+        2
     )
     app$click("featureFiltering_1_v1-export")
 
