@@ -13,6 +13,7 @@
 #' @importFrom shinyalert useShinyalert
 #' @importFrom shiny icon
 #' @importFrom waiter useWaiter
+#' @importFrom shinyjs useShinyjs
 build_process_ui <- function(initial_steps) {
     ui <- dashboardPage(
         skin = "blue",
@@ -33,6 +34,7 @@ build_process_ui <- function(initial_steps) {
             minified = FALSE
         ),
         body = dashboardBody(
+            useShinyjs(),
             useShinyFeedback(),
             useShinyalert(force = TRUE),
             waiter::useWaiter(),
