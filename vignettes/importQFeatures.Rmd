@@ -2,6 +2,7 @@
 title: "importQFeatures App"
 author:
     - name: Léopold Guyot
+    - name: Loïc Guille
 output:
     BiocStyle::html_document:
         self_contained: yes
@@ -121,5 +122,5 @@ containing *initial_QFeatures.rds*, the QFeatures object on your computer,
 QFeatures object, and *initial_QFeatures_sessionInfo.html* containing a view of 
 all packages and versions used to generate the QFeatures object. Choose the 
 destination folder and the folder name, then click on save. Your QFeatures object
-is now available on your computer, it can be used in combination with the scp 
-package to continue the data processing.
+is now available on your computer, it can be used in combination with the QFeatures and scp 
+package to continue the data processing.  
