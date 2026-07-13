@@ -2,6 +2,7 @@
 title: "QFeaturesGUI"
 author:
     - name: Léopold Guyot
+    - name: Loïc Guille
 output:
     BiocStyle::html_document:
         self_contained: yes
