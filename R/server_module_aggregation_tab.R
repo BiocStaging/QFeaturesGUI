@@ -7,6 +7,7 @@
 #'
 #' @importFrom shiny moduleServer updateSelectInput observeEvent eventReactive is.reactive
 #' @importFrom MultiAssayExperiment getWithColData
+#' @importFrom shinyjs enable
 #'
 server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
     moduleServer(id, function(input, output, session) {
@@ -53,7 +54,7 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
         clicked <- reactiveVal(FALSE)
         observeEvent(input$aggregate, {
             clicked(TRUE)
-
+            enable("export_aggregation")
             choices <- feature_choices()
             selected_feature <- input$features
             if (length(choices) == 0L) {

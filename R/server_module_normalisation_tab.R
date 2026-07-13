@@ -7,6 +7,7 @@
 #'
 #' @importFrom shiny moduleServer updateSelectInput observeEvent reactive is.reactive
 #' @importFrom MultiAssayExperiment getWithColData
+#' @importFrom shinyjs enable
 #'
 server_module_normalisation_tab <- function(id, step_number, step_rv, parent_rv) {
     moduleServer(id, function(input, output, session) {
@@ -29,6 +30,7 @@ server_module_normalisation_tab <- function(id, step_number, step_rv, parent_rv)
         clicked <- reactiveVal(FALSE)
         observeEvent(input$apply_normalisation, {
             clicked(TRUE)
+            enable("export_normalisation")
         })
 
         output$post_density_message <- renderText({
