@@ -106,6 +106,56 @@ add_expected_process_assays <- function(qfeatures, processed_qfeatures,
     expected
 }
 
+run_filtering_module_export <- function(qfeatures, type, condition_specs) {
+    step_rv <- shiny::reactiveVal(0)
+    .qf$qfeatures <- format_qfeatures(qfeatures, seq_along(qfeatures))
+    global_rv$code_lines <- list()
+    global_rv$step_rvs <- list(step_rv)
+    global_rv$exception_data <- data.frame(
+        id = character(),
+        title = character(),
+        type = character(),
+        func_call = character(),
+        message = character(),
+        full_message = character(),
+        time = as.POSIXct(character()),
+        stringsAsFactors = FALSE
+    )
+
+    on.exit({
+        .qf$qfeatures <- NULL
+        global_rv$code_lines <- list()
+        global_rv$step_rvs <- list()
+    }, add = TRUE)
+
+    shiny::testServer(
+        server_module_filtering_tab,
+        args = list(
+            id = paste0(type, "_filtering_test"),
+            step_number = 1,
+            step_rv = step_rv,
+            parent_rv = NULL,
+            type = type
+        ),
+        {
+            n_boxes(length(condition_specs))
+            for (i in seq_along(condition_specs)) {
+                filtering_condition_specs[[paste0("condition_spec_", i)]] <-
+                    condition_specs[[i]]
+            }
+            session$flushReact()
+            session$setInputs(apply_filters = 1)
+            session$flushReact()
+            session$setInputs(export = 1)
+            session$flushReact()
+        }
+    )
+
+    exported <- .qf$qfeatures
+    names(exported) <- remove_QFeaturesGUI(names(exported))
+    exported
+}
+
 test_that("{shinytest2} recording: processQFeatures", {
     testthat::skip_on_cran()
 
@@ -286,102 +336,38 @@ test_that("{shinytest2}: logTransform exports the expected QFeatures object", {
     expect_qfeatures_equal(object = exported, expected = expected)
 })
 
-test_that("{shinytest2}: sampleFiltering exports the expected QFeatures object", {
+test_that("sampleFiltering exports the expected QFeatures object", {
     testthat::skip_on_cran()
 
     qf <- make_process_test_qfeatures()
-    app <- AppDriver$new(
-        QFeaturesGUI::processQFeatures(qf, prefilledSteps = "sampleFiltering"),
-        name = "processQFeatures_sampleFiltering",
-        height = 1000,
-        width = 1200
-    )
-    on.exit(app$stop(), add = TRUE)
-
-    wait_for_process_step(app, 1)
-    app$wait_for_js("document.getElementById('sampleFiltering_1_v1-add_box') !== null", timeout = 10000)
-    app$click("sampleFiltering_1_v1-add_box")
-    wait_for_process_input(app, "sampleFiltering_1_v1-filtering_1-annotation_selection")
-    app$set_inputs(`sampleFiltering_1_v1-filtering_1-annotation_selection` = "condition")
-    wait_for_process_input_value(
-        app,
-        "sampleFiltering_1_v1-filtering_1-annotation_selection",
-        "condition"
-    )
-    wait_for_process_input_value(
-        app,
-        "sampleFiltering_1_v1-filtering_1-filter_operator",
-        "=="
-    )
-    app$set_inputs(`sampleFiltering_1_v1-filtering_1-filter_operator` = "is_not_missing")
-    wait_for_process_input_value(
-        app,
-        "sampleFiltering_1_v1-filtering_1-filter_operator",
-        "is_not_missing"
-    )
-    app$click("sampleFiltering_1_v1-apply_filters")
-    wait_for_process_output_number(
-        app,
-        "sampleFiltering_1_v1-number_samples_removed",
-        1
-    )
-    app$click("sampleFiltering_1_v1-export")
-
+    condition_specs <- list(list(
+        annotation = "condition",
+        operator = "is_not_missing",
+        value = NULL
+    ))
     processed <- qf[, !is.na(SummarizedExperiment::colData(qf)$condition), ]
     expected <- add_expected_process_assays(qf, processed, 1, "samples_filtering")
-    exported <- download_process_qfeatures(app)
+    exported <- run_filtering_module_export(qf, "samples", condition_specs)
 
     expect_qfeatures_equal(object = exported, expected = expected)
 })
 
-test_that("{shinytest2}: featureFiltering exports the expected QFeatures object", {
+test_that("featureFiltering exports the expected QFeatures object", {
     testthat::skip_on_cran()
 
     qf <- make_process_test_qfeatures()
-    app <- AppDriver$new(
-        QFeaturesGUI::processQFeatures(qf, prefilledSteps = "featureFiltering"),
-        name = "processQFeatures_featureFiltering",
-        height = 1000,
-        width = 1200
-    )
-    on.exit(app$stop(), add = TRUE)
-
-    wait_for_process_step(app, 1)
-    app$wait_for_js("document.getElementById('featureFiltering_1_v1-add_box') !== null", timeout = 10000)
-    app$click("featureFiltering_1_v1-add_box")
-    wait_for_process_input(app, "featureFiltering_1_v1-filtering_1-annotation_selection")
-    app$set_inputs(`featureFiltering_1_v1-filtering_1-annotation_selection` = "feature_class")
-    wait_for_process_input_value(
-        app,
-        "featureFiltering_1_v1-filtering_1-annotation_selection",
-        "feature_class"
-    )
-    wait_for_process_input_value(
-        app,
-        "featureFiltering_1_v1-filtering_1-filter_operator",
-        "=="
-    )
-    app$set_inputs(`featureFiltering_1_v1-filtering_1-filter_operator` = "is_not_missing")
-    wait_for_process_input_value(
-        app,
-        "featureFiltering_1_v1-filtering_1-filter_operator",
-        "is_not_missing"
-    )
-    app$click("featureFiltering_1_v1-apply_filters")
-    wait_for_process_output_number(
-        app,
-        "featureFiltering_1_v1-number_features_removed",
-        2
-    )
-    app$click("featureFiltering_1_v1-export")
-
+    condition_specs <- list(list(
+        annotation = "feature_class",
+        operator = "is_not_missing",
+        value = NULL
+    ))
     processed <- qf
     for (assay_name in names(processed)) {
         keep <- !is.na(SummarizedExperiment::rowData(qf[[assay_name]])$feature_class)
         processed[[assay_name]] <- qf[[assay_name]][keep, ]
     }
     expected <- add_expected_process_assays(qf, processed, 1, "features_filtering")
-    exported <- download_process_qfeatures(app)
+    exported <- run_filtering_module_export(qf, "features", condition_specs)
 
     expect_qfeatures_equal(object = exported, expected = expected)
 })
