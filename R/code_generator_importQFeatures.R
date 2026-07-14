@@ -56,6 +56,7 @@ code_generator_read_qfeatures <- function(input_table, sample_table, qfeatures, 
     if (singlcelldata) {
         codeLines <- c(codeLines, "\nqfeatures <- setQFeaturesType(\n\tqfeatures,\n\ttype = 'scp'\n)")
     }
+    codeLines <- c(codeLines, "\nnames(qfeatures) <- paste0(\n\tnames(qfeatures),\n\t'_initial_import'\n)")
     codeLines
 }
 

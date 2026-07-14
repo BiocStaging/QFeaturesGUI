@@ -354,17 +354,10 @@ codeGeneratorFiltering <- function(qf, condition, type, step_number) {
             paste0("c(", paste(escaped_values, collapse = ","), ")")
         }
     }
-    if (length(condition) == 0) {
-        codeLines <- c(codeLines, sprintf(
-            "####################################
-######## %s filtering ########
-####################################
-## No %s filtering applied\n",
-            type,
-            type
-        ))
-    } else {
-        if (type == "features") {
+    if (type == "features") {
+        if (length(condition) == 0) {
+            condition_used <- "se <- se"
+        } else {
             final <- "se <- se["
             for (i in 1:length(condition)) {
                 annotation <- as_r_string_literal(condition[[i]]$annotation)
@@ -410,8 +403,9 @@ codeGeneratorFiltering <- function(qf, condition, type, step_number) {
                 }
             }
             condition_used <- paste0(final, ",]")
-            codeLines <- c(codeLines, sprintf(
-                "####################################
+        }
+        codeLines <- c(codeLines, sprintf(
+            "####################################
 ######## features filtering ########
 ####################################
 for(i in 1:length(step%s_setNames)){
@@ -420,13 +414,16 @@ for(i in 1:length(step%s_setNames)){
 \tqf[[step%s_setNames[i]]] <- se
 \tqf <- addAssayLink(qf, from = step%s_setNames[i], to = step%s_setNames[i])
 }\n",
-                step_number - 1,
-                step_number - 1,
-                condition_used,
-                step_number,
-                step_number - 1,
-                step_number
-            ))
+            step_number - 1,
+            step_number - 1,
+            condition_used,
+            step_number,
+            step_number - 1,
+            step_number
+        ))
+    } else {
+        if (length(condition) == 0) {
+            condition_used <- "se <- se"
         } else {
             final <- "se <- se[,"
             for (i in 1:length(condition)) {
@@ -473,8 +470,9 @@ for(i in 1:length(step%s_setNames)){
                 }
             }
             condition_used <- paste0(final, "]")
-            codeLines <- c(codeLines, sprintf(
-                "####################################
+        }
+        codeLines <- c(codeLines, sprintf(
+            "####################################
 ######## samples filtering #########
 ####################################
 for(i in 1:length(step%s_setNames)){
@@ -483,14 +481,13 @@ for(i in 1:length(step%s_setNames)){
 \tqf[[step%s_setNames[i]]] <- se
 \tqf <- addAssayLink(qf, from = step%s_setNames[i], to = step%s_setNames[i])
 }\n",
-                step_number - 1,
-                step_number - 1,
-                condition_used,
-                step_number,
-                step_number - 1,
-                step_number
-            ))
-        }
+            step_number - 1,
+            step_number - 1,
+            condition_used,
+            step_number,
+            step_number - 1,
+            step_number
+        ))
     }
     codeLines
 }

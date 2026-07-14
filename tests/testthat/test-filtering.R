@@ -153,6 +153,28 @@ test_that("codeGeneratorFiltering emits is.na conditions", {
     ))
 })
 
+test_that("codeGeneratorFiltering emits no-op code without conditions", {
+    qf <- make_test_qfeatures()
+
+    feature_code <- paste(codeGeneratorFiltering(
+        qf = qf,
+        condition = list(),
+        type = "features",
+        step_number = 1
+    ), collapse = "\n")
+    sample_code <- paste(codeGeneratorFiltering(
+        qf = qf,
+        condition = list(),
+        type = "samples",
+        step_number = 1
+    ), collapse = "\n")
+
+    expect_true(grepl("se <- se", feature_code, fixed = TRUE))
+    expect_true(grepl("se <- se", sample_code, fixed = TRUE))
+    expect_false(grepl("se <- se[TRUE,]", feature_code, fixed = TRUE))
+    expect_false(grepl("se <- se[, TRUE]", sample_code, fixed = TRUE))
+})
+
 test_that("missingness plot values explain TRUE and FALSE labels", {
     values <- c("a", NA, "b")
 
