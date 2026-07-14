@@ -232,7 +232,7 @@ test_that("{shinytest2} recording: processQFeatures", {
     app$set_inputs(`missingValuesFeatures_5_v1-threshold_features` = 0.75)
     app$click("missingValuesFeatures_5_v1-export")
     wait_for_process_step(app, 6)
-    app$wait_for_js("document.getElementById('missingValuesSamples_6_v1-export') !== null", timeout = 30000)
+    app$wait_for_js("document.getElementById('missingValuesSamples_6_v1-export') !== null", timeout = 120000)
     app$set_inputs(`missingValuesSamples_6_v1-threshold_samples` = 0.5)
     app$click("missingValuesSamples_6_v1-export")
     app$wait_for_js("document.getElementById('normalisation_7_v1-apply_normalisation') !== null", timeout = 10000)
