@@ -96,8 +96,10 @@ make_process_test_qfeatures <- function() {
     ))
 }
 
-add_expected_process_assays <- function(qfeatures, processed_qfeatures,
-    step_number, type) {
+add_expected_process_assays <- function(
+      qfeatures, processed_qfeatures,
+      step_number, type
+) {
     expected <- qfeatures
     for (assay_name in names(processed_qfeatures)) {
         expected[[paste0(assay_name, "_", type, "_", step_number)]] <-
@@ -122,11 +124,14 @@ run_filtering_module_export <- function(qfeatures, type, condition_specs) {
         stringsAsFactors = FALSE
     )
 
-    on.exit({
-        .qf$qfeatures <- NULL
-        global_rv$code_lines <- list()
-        global_rv$step_rvs <- list()
-    }, add = TRUE)
+    on.exit(
+        {
+            .qf$qfeatures <- NULL
+            global_rv$code_lines <- list()
+            global_rv$step_rvs <- list()
+        },
+        add = TRUE
+    )
 
     shiny::testServer(
         server_module_filtering_tab,
@@ -352,6 +357,16 @@ test_that("sampleFiltering exports the expected QFeatures object", {
     expect_qfeatures_equal(object = exported, expected = expected)
 })
 
+test_that("sampleFiltering exports unchanged QFeatures object without conditions", {
+    testthat::skip_on_cran()
+
+    qf <- make_process_test_qfeatures()
+    expected <- add_expected_process_assays(qf, qf, 1, "samples_filtering")
+    exported <- run_filtering_module_export(qf, "samples", list())
+
+    expect_qfeatures_equal(object = exported, expected = expected)
+})
+
 test_that("featureFiltering exports the expected QFeatures object", {
     testthat::skip_on_cran()
 
@@ -368,6 +383,16 @@ test_that("featureFiltering exports the expected QFeatures object", {
     }
     expected <- add_expected_process_assays(qf, processed, 1, "features_filtering")
     exported <- run_filtering_module_export(qf, "features", condition_specs)
+
+    expect_qfeatures_equal(object = exported, expected = expected)
+})
+
+test_that("featureFiltering exports unchanged QFeatures object without conditions", {
+    testthat::skip_on_cran()
+
+    qf <- make_process_test_qfeatures()
+    expected <- add_expected_process_assays(qf, qf, 1, "features_filtering")
+    exported <- run_filtering_module_export(qf, "features", list())
 
     expect_qfeatures_equal(object = exported, expected = expected)
 })
