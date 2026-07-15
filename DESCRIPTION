@@ -43,7 +43,7 @@ Imports:
     MsCoreUtils,
     waiter
 Depends:
-    R (>= 4.3.0)
+    R (>= 4.5.0)
 Suggests: 
     knitr,
     BiocStyle,
