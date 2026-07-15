@@ -70,10 +70,10 @@ knitr::include_graphics("screenshots/preFilteringMetrics.jpg")
 ```
 
 The `Pre-Filtering Metrics` section (Figure 1) is composed of two different parts:
-  
-  - a dimension reduction graph (`B`) on the right and the settings (`A`) to customize this graph on the left. For example, you can choose the dimensionality reduction method or type.
-  
-  - a single feature visualization (`C`) where you can display a boxplot of a selected feature split by sample annotation.
+
+- a dimension reduction graph (`B`) on the right and the settings (`A`) to customize this graph on the left. For example, you can choose the dimensionality reduction method or type.
+
+- a single feature visualization (`C`) where you can display a boxplot of a selected feature split by sample annotation.
 
 ## Filtering section
 

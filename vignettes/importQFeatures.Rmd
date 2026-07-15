@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 ```
 
 # Create a QFeatures object
- 
+
 ```{r, echo = FALSE, out.width="100%", fig.cap="A view of the import section."}
 knitr::include_graphics("screenshots/import.png")
 ```

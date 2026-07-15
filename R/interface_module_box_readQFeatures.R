@@ -34,7 +34,7 @@ box_readqfeatures_ui <- function(id) {
                         bs3Tooltip(
                             trigger = "Run/Batch column:",
                             tooltipText = "For the multi-set case, the assayData column that contains\
-                           the runs/batches.",
+                            the runs/batches.",
                             placement = "bottom"
                         )
                     ),
@@ -123,8 +123,8 @@ box_readqfeatures_ui <- function(id) {
                             style = "width: 100%;"
                         ),
                         tooltipText = "Download a zip file containing the QFeatures object, \
-                           the script used to generate this object, and the R sessionInfo \
-                           containing the packages and versions used for the script.",
+                            the script used to generate this object, and the R sessionInfo \
+                            containing the packages and versions used for the script.",
                         placement = "top"
                     )
                 )

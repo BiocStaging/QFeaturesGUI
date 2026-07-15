@@ -88,21 +88,21 @@ interface_module_normalisation_tab <- function(id) {
         ),
         disabled(
             div(
-                id = NS(id,"export_normalisation"),
+                id = NS(id, "export_normalisation"),
                 bs3Tooltip(
-                  actionButton(
-                    NS(id, "export"),
-                    "Save the processed sets",
-                    icon("hand-pointer", class = "fa-solid"),
-                    width = "100%",
-                    class = "load-button"
-                  ),
-                  paste(
-                    "Write the processed sets to the QFeatures object.",
-                    "This is needed to proceed to the next steps.",
-                    sep = " "
-                  ),
-                  placement = "top"
+                    actionButton(
+                        NS(id, "export"),
+                        "Save the processed sets",
+                        icon("hand-pointer", class = "fa-solid"),
+                        width = "100%",
+                        class = "load-button"
+                    ),
+                    paste(
+                        "Write the processed sets to the QFeatures object.",
+                        "This is needed to proceed to the next steps.",
+                        sep = " "
+                    ),
+                    placement = "top"
                 )
             )
         )

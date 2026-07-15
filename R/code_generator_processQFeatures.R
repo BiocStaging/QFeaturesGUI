@@ -171,14 +171,14 @@ for (i in 1:length(step%s_setNames)){
 ###### Missing value samples #######
 ####################################
 for(i in 1:length(step%s_setNames)){
-  tableNA <- nNA(
-    object = qf,
-    i = step%s_setNames[i]
-  )
-  tableMetadata <- colData(qf[[step%s_setNames[i]]])
-  tableMetadata$pNA <- tableNA$nNAcols$pNA[match(rownames(tableMetadata), tableNA$nNAcols$name)]
-  qf[[step%s_setNames[i]]] <- qf[[step%s_setNames[i]]][, tableMetadata$pNA <= %s]
-  qf <- addAssayLink(qf, from = step%s_setNames[i], to = step%s_setNames[i])
+    tableNA <- nNA(
+        object = qf,
+        i = step%s_setNames[i]
+    )
+    tableMetadata <- colData(qf[[step%s_setNames[i]]])
+    tableMetadata$pNA <- tableNA$nNAcols$pNA[match(rownames(tableMetadata), tableNA$nNAcols$name)]
+    qf[[step%s_setNames[i]]] <- qf[[step%s_setNames[i]]][, tableMetadata$pNA <= %s]
+    qf <- addAssayLink(qf, from = step%s_setNames[i], to = step%s_setNames[i])
 }",
             step_number - 1,
             step_number - 1,

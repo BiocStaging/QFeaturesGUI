@@ -81,21 +81,22 @@ interface_module_aggregation_tab <- function(id) {
             )
         ),
         disabled(
-            div(id = NS(id, "export_aggregation"),
+            div(
+                id = NS(id, "export_aggregation"),
                 bs3Tooltip(
-                  trigger = shiny::actionButton(
-                    inputId = NS(id, "export"),
-                    "Save the processed sets",
-                    icon("hand-pointer", class = "fa-solid"),
-                    width = "100%",
-                    class = "load-button"
-                  ),
-                  tooltipText = paste(
-                    "Write the processed sets to the QFeatures object.",
-                    "This is needed to proceed to the next steps.",
-                    sep = " "
-                  ),
-                  placement = "top"
+                    trigger = shiny::actionButton(
+                        inputId = NS(id, "export"),
+                        "Save the processed sets",
+                        icon("hand-pointer", class = "fa-solid"),
+                        width = "100%",
+                        class = "load-button"
+                    ),
+                    tooltipText = paste(
+                        "Write the processed sets to the QFeatures object.",
+                        "This is needed to proceed to the next steps.",
+                        sep = " "
+                    ),
+                    placement = "top"
                 )
             )
         )

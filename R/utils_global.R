@@ -519,11 +519,11 @@ bs3Tooltip <- function(trigger,
         htmltools::singleton(
             shiny::tags$script(shiny::HTML(
                 "$(function() {
-             $('body').tooltip({
-               selector: '[data-toggle=\"tooltip\"]',
-               container: 'body'
-             });
-           });"
+            $('body').tooltip({
+                selector: '[data-toggle=\"tooltip\"]',
+                container: 'body'
+            });
+        });"
             ))
         ),
         tagAppendAttributes(

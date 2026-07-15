@@ -161,10 +161,10 @@ interface.
 The use of each application is described in a corresponding vignette:
 
 - **Data import**: `importQFeatures`  
-  See the [importQFeatures vignette](importQFeatures.html)
+    See the [importQFeatures vignette](importQFeatures.html)
 
 - **Data processing**: `processQFeatures`  
-  See the [processQFeatures vignette](processQFeatures.html)
+    See the [processQFeatures vignette](processQFeatures.html)
 
 Additional applications will be introduced in future releases and documented in
 their own vignettes.
