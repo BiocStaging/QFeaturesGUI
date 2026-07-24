@@ -504,7 +504,7 @@ missingness_filter_plot_values <- function(values, operator) {
         false_label <- "Is missing"
         true_label <- "Is not missing"
     } else {
-        stop(paste0("Unsupported missingness operator: ", operator))
+        stop("Unsupported missingness operator: ", operator)
     }
     factor(
         ifelse(condition_mask, true_label, false_label),

@@ -19,12 +19,16 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r params, include = FALSE}
 knitr::opts_chunk$set(
     collapse = TRUE,
     comment = "#>",
     crop = NULL
 )
+```
+
+```{r load, message = FALSE}
+library(QFeaturesGUI)
 ```
 
 # QFeaturesGUI
@@ -113,7 +117,7 @@ documentation will often help users troubleshoot effectively.
 # Installation and Launch
 ## Installation
 
-```{r, eval = FALSE}
+```{r install, eval = FALSE}
 # Check if remotes is installed. Otherwise install it.
 if (!require("remotes", quietly = TRUE)) {
     install.packages("remotes")
@@ -143,7 +147,7 @@ if (interactive()) {
 
 Similarly, the application dedicated to data processing can be launched using:
 
-```{r, eval = FALSE}
+```{r launch, eval = FALSE}
 app <- processQFeatures(qfeaturesObject)
 
 if (interactive()) {
@@ -174,3 +178,9 @@ their own vignettes.
 
 
 # References
+
+# Session Information
+
+```{r sessInfo}
+sessionInfo()
+```

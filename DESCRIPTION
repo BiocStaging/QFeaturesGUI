@@ -1,12 +1,13 @@
 Package: QFeaturesGUI
 Title: A suite of shiny apps to use the main functionalities of the QFeatures package
-Version: 0.1.1
-Date: 2024-04-23
+Version: 0.99.0
 Authors@R: 
     c(person(given = "Léopold", family = "Guyot", email = "leopold.guyot@uclouvain.be", comment = c(ORCID = "0009-0005-2217-3855"), role = c("aut", "cre")),
-    person(given =  "Loïc", family = "Guille", email = "loic.guille@uclouvain.be", comment = c(ORCID = "0000-0002-8387-1092"), role = c("aut")))
+    person(given =  "Loïc", family = "Guille", email = "loic.guille@uclouvain.be", comment = c(ORCID = "0000-0002-8387-1092"), role = c("aut")),
+    person(given =  "Laurent", family = "Gatto", email = "laurent.gatto@uclouvain.be", comment = c(ORCID = "0000-0002-1520-2268"), role = c("ctb")),
+    person(e-OMIX, role = c("fnd")))
 Description: "QFeaturesGUI is a suite of shiny apps that serve as graphical interfaces for the QFeatures package. Currently, the package contains the following shiny apps: 'importQFeatures'."
-biocViews: Software, ShinyApps, GUI, Proteomics
+biocViews: Software, ShinyApps, GUI, Proteomics, SingleCell, DataImport, PreProcessing
 URL: https://rformassspectrometry.github.io/QFeaturesGUI/, https://github.com/rformassspectrometry/QFeaturesGUI
 BugReports: https://github.com/rformassspectrometry/QFeaturesGUI/issues
 License: MIT + file LICENSE

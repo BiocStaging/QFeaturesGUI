@@ -19,7 +19,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r params, include = FALSE}
 knitr::opts_chunk$set(
     collapse = TRUE,
     comment = "#>",
@@ -27,9 +27,13 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r load, message = FALSE}
+library(QFeaturesGUI)
+```
+
 # Create a QFeatures object
 
-```{r, echo = FALSE, out.width="100%", fig.cap="A view of the import section."}
+```{r import, echo = FALSE, out.width="100%", fig.cap="A view of the import section."}
 knitr::include_graphics("screenshots/import.png")
 ```
 
@@ -80,7 +84,7 @@ Sample Table box (red box `B`).
 
 ## QFeatures conversion
 
-```{r, echo = FALSE, fig.cap="A view of the conversion and download sections."}
+```{r conver, echo = FALSE, fig.cap="A view of the conversion and download sections."}
 knitr::include_graphics("screenshots/conversion_download.png")
 ```
 
@@ -124,3 +128,9 @@ all packages and versions used to generate the QFeatures object. Choose the
 destination folder and the folder name, then click on save. Your QFeatures object
 is now available on your computer, it can be used in combination with the QFeatures and scp 
 package to continue the data processing.  
+
+# Session Information
+
+```{r sessInfo}
+sessionInfo()
+```

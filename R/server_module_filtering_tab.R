@@ -357,7 +357,7 @@ apply_filter_operator <- function(values, operator, target) {
         ">=" = `>=`
     )
     if (!(operator %in% names(operator_functions))) {
-        stop(paste0("Unsupported filtering operator: ", operator))
+        stop("Unsupported filtering operator: ", operator)
     }
     operator_functions[[operator]](values, target)
 }

@@ -19,12 +19,16 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r params, include = FALSE}
 knitr::opts_chunk$set(
     collapse = TRUE,
     comment = "#>",
     crop = NULL
 )
+```
+
+```{r load, message = FALSE}
+library(QFeaturesGUI)
 ```
 
 This app can be used once the data from `importQFeatures()` have been downloaded. In order to
@@ -65,7 +69,7 @@ If the default workflow is the one you want to use, or if you have already speci
 
 ## Pre-Filtering Metrics section
 
-```{r, echo = FALSE, out.width="100%", fig.cap= "pre-Filtering metrics section"}
+```{r preFiltMet, echo = FALSE, out.width="100%", fig.cap= "pre-Filtering metrics section"}
 knitr::include_graphics("screenshots/preFilteringMetrics.jpg")
 ```
 
@@ -77,7 +81,7 @@ The `Pre-Filtering Metrics` section (Figure 1) is composed of two different part
 
 ## Filtering section
 
-```{r, echo = FALSE, out.width="100%", fig.cap= "filtering section"}
+```{r filt, echo = FALSE, out.width="100%", fig.cap= "filtering section"}
 knitr::include_graphics("screenshots/filtering.jpg")
 ```
 
@@ -85,7 +89,7 @@ knitr::include_graphics("screenshots/filtering.jpg")
 
 ## Post-filtering Metrics section
 
-```{r, echo = FALSE, out.width="100%", fig.cap= "post-Filtering metrics section"}
+```{r postFiltMet, echo = FALSE, out.width="100%", fig.cap= "post-Filtering metrics section"}
 knitr::include_graphics("screenshots/postFilteringMetrics.jpg")
 ```
 
@@ -95,7 +99,7 @@ Once the filtering has been done, save the object by clicking the button `Save t
 
 # Filtering missing values by samples/features
 
-```{r, echo = FALSE, out.width="100%", fig.cap= "Filtering missing values by samples/features page"}
+```{r naFilt, echo = FALSE, out.width="100%", fig.cap= "Filtering missing values by samples/features page"}
 knitr::include_graphics("screenshots/missing_values_filtering.jpg")
 ```
 
@@ -105,7 +109,7 @@ In this step, you will need to define a threshold for the percentage of missing 
 
 # Normalisation
 
-```{r, echo = FALSE, out.width="100%", fig.cap= "Normalization page"}
+```{r norm, echo = FALSE, out.width="100%", fig.cap= "Normalization page"}
 knitr::include_graphics("screenshots/normalisation.jpg")
 ```
 
@@ -123,7 +127,7 @@ Once the normalisation method is selected, click on `Apply normalisation` (`B`);
 
 # Zero to NA
 
-```{r, echo = FALSE, out.width="100%", fig.cap= "Zero to NA page"}
+```{r zeroToNA, echo = FALSE, out.width="100%", fig.cap= "Zero to NA page"}
 knitr::include_graphics("screenshots/zero_to_na.jpg")
 ```
 
@@ -131,7 +135,7 @@ This step converts all zero intensities into missing values (NA) in the selected
 
 # Log Transformation
 
-```{r, echo = FALSE, out.width="100%", fig.cap= "Log transformation page"}
+```{r logTrans, echo = FALSE, out.width="100%", fig.cap= "Log transformation page"}
 knitr::include_graphics("screenshots/logTransform.jpg")
 ```
 
@@ -141,7 +145,7 @@ The log base is set to `log2` by default, but can also be set to `log10` or `ln`
 
 # Imputation
 
-```{r, echo = FALSE, out.width="100%", fig.cap= "Imputation page"}
+```{r impute, echo = FALSE, out.width="100%", fig.cap= "Imputation page"}
 knitr::include_graphics("screenshots/imputation.jpg")
 ```
 
@@ -165,7 +169,7 @@ Then click on `Apply imputation` (`B`). Once the imputation has run, the page wi
 
 # Aggregation
 
-```{r, echo = FALSE, out.width="100%", fig.cap= "Aggregation page"}
+```{r agg, echo = FALSE, out.width="100%", fig.cap= "Aggregation page"}
 knitr::include_graphics("screenshots/aggregate.jpg")
 ```
 
@@ -193,7 +197,7 @@ An aggregation boxplot will be displayed. This boxplot shows a feature coloured 
 
 # Join
 
-```{r, echo = FALSE, out.width="100%", fig.cap= "Join page"}
+```{r join, echo = FALSE, out.width="100%", fig.cap= "Join page"}
 knitr::include_graphics("screenshots/join.jpg")
 ```
 
@@ -201,8 +205,15 @@ The Join tab will combine the results from the previous step into a single datas
 
 # Summary
 
-```{r, echo = FALSE, out.width="100%", fig.cap= "Summary page"}
+```{r summary, echo = FALSE, out.width="100%", fig.cap= "Summary page"}
 knitr::include_graphics("screenshots/summary.jpg")
 ```
 
 The summary page displays the various assays present in the QFeatures object and indicates their interrelationships. Finally, a download button provides a zip file containing the final QFeatures object, the script used to generate it, and the R session with the package version.
+
+# Session Information
+
+```{r sessInfo}
+sessionInfo()
+```
+
