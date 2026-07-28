@@ -24,7 +24,6 @@ Imports:
     utils,
     htmltools,
     impute,
-    pcaMethods,
     plotly,
     MultiAssayExperiment,
     RColorBrewer,
