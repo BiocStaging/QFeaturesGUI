@@ -30,14 +30,6 @@ interface_module_qc_metrics <- function(id, type) {
                     choices = NULL,
                     label = "Select the set for dimension reduction"
                 ),
-                selectInput(
-                    inputId = NS(id, "selected_method"),
-                    choices = c("nipals", "ppca", "svdImpute"),
-                    label = bs3Tooltip(
-                        trigger = "Select Dimension Reduction Method",
-                        tooltipText = "For more information on the methods, see online documentation."
-                    )
-                ),
                 column(width = 6,
                        selectInput(
                          inputId = NS(id,"x_axis"),
@@ -84,7 +76,7 @@ interface_module_qc_metrics <- function(id, type) {
                 )
             ),
             box(
-                title = "Dimension Reduction",
+                title = "Dimension Reduction (Nipals)",
                 status = "primary",
                 width = 8,
                 solidHeader = FALSE,
