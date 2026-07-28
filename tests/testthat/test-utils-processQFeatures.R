@@ -238,7 +238,9 @@ test_that("pca_plotly handles no color and many categorical levels", {
         pca_df,
         pca_result = pca_result,
         color_name = "group",
-        show_legend = TRUE
+        show_legend = TRUE,
+        x_component = "PC1",
+        y_component = "PC2"
     )
     expect_s3_class(many_groups_plot, "plotly")
     expect_error(plotly::plotly_build(many_groups_plot), NA)
