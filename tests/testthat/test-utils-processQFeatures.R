@@ -209,9 +209,8 @@ test_that("imputation method metadata is internally consistent", {
 })
 
 test_that("pca_plotly handles no color and many categorical levels", {
-    pca_result <- pcaMethods::pca(
+    pca_result <- nipals::nipals(
         matrix(seq_len(48), nrow = 12),
-        method = "svd",
         center = TRUE
     )
     pca_df <- data.frame(
