@@ -394,7 +394,7 @@ invalidate_steps_from <- function(step_number) {
 
 # QC metrics and PCA helpers ----
 
-#' PCA Methods Wrapper
+#' Nipals Wrapper
 #'
 #' This function performs Principal Component Analysis (PCA) on a SingleCellExperiment object using nipals.
 #'
@@ -403,27 +403,28 @@ invalidate_steps_from <- function(step_number) {
 #' @param scale A logical indicating whether the variables should be scaled before PCA.
 #' @param transpose A logical indicating whether the assay matrix should be transposed before PCA.
 #'
-#' @return A pcaRes object resulting from the PCA.
-#' @rdname INTERNAL_pcaMethods_wrapper
+#' @return A list with components eig, scores, loadings, fitted, ncomp, R2, iter, center, scale
+#' @rdname INTERNAL_nipalsWrapper
 #' @keywords internal
 #'
 #' @importFrom nipals nipals
 #' @importFrom SummarizedExperiment assay
 #'
-pcaMethods_wrapper <- function(sce, center, scale, transpose = FALSE) {
+nipalsWrapper <- function(sce, center, scale, transpose = FALSE) {
     mat <- assay(sce)
-    mat <- mat[rowSums(is.na(mat)) != ncol(mat), ]
-    mat <- mat[, colSums(is.na(mat)) < nrow(mat)]
-    if (scale) {
-        mat <- base::scale(mat, center = center, scale = TRUE)
-        center <- FALSE
+    dimMat <- dim(mat)
+    mat <- mat[rowSums(is.finite(mat)) > 2, colSums(is.finite(mat)) > 2]
+    if (!identical(dim(mat), dimMat)){
+        warning("Some variable(s) with less than 3 observations were removed")
     }
+
     if (transpose) {
         mat <- t(mat)
     }
     pca <- nipals::nipals(mat,
         center = center,
-        ncomp = 6
+        ncomp = 6,
+        scale = scale
     )
     pca
 }

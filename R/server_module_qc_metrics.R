@@ -135,11 +135,13 @@ server_module_pca_box <- function(id, single_assay, pca_type, scale, center, sho
             req(single_assay())
             req(!is_empty_set(single_assay()))
             req(ncol(single_assay()) > 0L)
-            pcaMethods_wrapper(
-                single_assay(),
-                transpose = pca_type() == "samples",
-                scale = scale(),
-                center = center()
+            error_handler(
+              nipalsWrapper,
+              "QC Nipals",
+              sce = single_assay(),
+              transpose = pca_type() == "samples",
+              scale = scale(),
+              center = center()
             )
         })
         dataframe <- reactive({
