@@ -9,14 +9,15 @@
 <img src="stickers/QFeaturesGUI.png" align="right" height="139" alt="" />
 
 **QFeaturesGUI** is a collection of Shiny applications that provide graphical
-user interfaces for MS-based proteomics data analysis using the Bioconductor
+user interfaces for MS-based proteomics data analysis using the 
+[R for Mass Spectrometry](https://www.rformassspectrometry.org/)/[Bioconductor](https://bioconductor.org/)
 ecosystem. It supports both **bulk** and **single-cell proteomics (SCP)**
 workflows and builds on the
 [`QFeatures`](https://www.bioconductor.org/packages/release/bioc/html/QFeatures.html) and
 [`scp`](https://bioconductor.org/packages/release/bioc/html/scp.html) packages.
 
 Rather than a single application, QFeaturesGUI is composed of
-multiple apps, each dedicated to a specific step of the proteomics data
+multiple apps, each dedicated to specific steps of the proteomics data
 analysis workflow.
 
 
@@ -73,6 +74,7 @@ and projects for MS-based proteomics and single-cell data analysis:
 
 - [`msqrob2`](https://www.bioconductor.org/packages/release/bioc/html/msqrob2.html)
   Robust statistical inference for quantitative LC-MS proteomics
+
 - [`RforMassSpectrometry`](https://www.rformassspectrometry.org/)  
   A collection of R packages for the analysis and interpretation of mass
   spectrometry data.
@@ -88,9 +90,10 @@ and projects for MS-based proteomics and single-cell data analysis:
 
 ## Contributing
 
-Contributions to `QFeaturesGUI` are welcome. This includes bug reports,
+Contributions to `QFeaturesGUI` are welcome. These include bug reports,
 feature requests, and suggestions for new applications or improvements to
-existing ones.
+existing ones. Contributors agree to abide by the terms of the project 
+[Code of Conduct](https://rformassspectrometry.github.io/RforMassSpectrometry/articles/RforMassSpectrometry.html#code-of-conduct).
 
 Issues and enhancement requests can be submitted via the
 [GitHub issue tracker](https://github.com/rformassspectrometry/QFeaturesGUI/issues).
