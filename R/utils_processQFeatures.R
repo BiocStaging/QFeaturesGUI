@@ -228,6 +228,41 @@ check_qfeatures <- function(qfeatures) {
     qfeatures
 }
 
+#' Build the bundled demo QFeatures object
+#'
+#' @return A \linkS4class{QFeatures} object built from the package
+#'   \code{inputTable} and \code{sampleTable} example datasets.
+#'
+#' @keywords internal
+#' @noRd
+demo_process_qfeatures <- function() {
+    data_env <- new.env(parent = emptyenv())
+    utils::data(
+        list = c("inputTable", "sampleTable"),
+        package = "QFeaturesGUI",
+        envir = data_env
+    )
+
+    if (!exists("inputTable", envir = data_env, inherits = FALSE) ||
+        !exists("sampleTable", envir = data_env, inherits = FALSE)) {
+        stop("Bundled demo data could not be loaded.")
+    }
+
+    qfeatures <- QFeatures::readQFeatures(
+        assayData = data_env$inputTable,
+        colData = data_env$sampleTable,
+        runCol = "Raw.file",
+        quantCols = NULL,
+        removeEmptyCols = TRUE,
+        verbose = FALSE
+    )
+    if (length(qfeatures) > 0) {
+        qfeatures <- QFeatures::zeroIsNA(qfeatures, i = seq_along(qfeatures))
+    }
+
+    qfeatures
+}
+
 #' Validate and map prefilled workflow steps
 #'
 #' Internal helper to validate workflow step identifiers and convert them

@@ -73,6 +73,25 @@ test_that("check_qfeatures validates objects and RDS paths", {
     )
 })
 
+test_that("demo_process_qfeatures builds the bundled zero-to-NA demo object", {
+    data("inputTable", package = "QFeaturesGUI")
+    data("sampleTable", package = "QFeaturesGUI")
+
+    expected <- QFeatures::readQFeatures(
+        assayData = inputTable,
+        colData = sampleTable,
+        runCol = "Raw.file",
+        quantCols = NULL,
+        removeEmptyCols = TRUE,
+        verbose = FALSE
+    )
+    expected <- QFeatures::zeroIsNA(expected, i = seq_along(expected))
+
+    object <- demo_process_qfeatures()
+
+    expect_qfeatures_equal(object, expected)
+})
+
 test_that("check_prefilled_steps maps valid workflow identifiers", {
     expect_equal(
         check_prefilled_steps(c("sampleFiltering", "normalisation", "join")),
