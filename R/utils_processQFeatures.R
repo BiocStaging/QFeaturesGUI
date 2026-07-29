@@ -394,37 +394,37 @@ invalidate_steps_from <- function(step_number) {
 
 # QC metrics and PCA helpers ----
 
-#' PCA Methods Wrapper
+#' Nipals Wrapper
 #'
-#' This function performs Principal Component Analysis (PCA) on a SingleCellExperiment object using the specified method.
+#' This function performs Principal Component Analysis (PCA) on a SingleCellExperiment object using nipals.
 #'
 #' @param sce A SingleCellExperiment object. The PCA is performed on the assay of this object.
-#' @param method A character string specifying the PCA method to use. This should be one of the methods supported by the pcaMethods package.
 #' @param center A logical indicating whether the variables should be centered before PCA.
 #' @param scale A logical indicating whether the variables should be scaled before PCA.
 #' @param transpose A logical indicating whether the assay matrix should be transposed before PCA.
 #'
-#' @return A pcaRes object resulting from the PCA.
-#' @rdname INTERNAL_pcaMethods_wrapper
+#' @return A list with components eig, scores, loadings, fitted, ncomp, R2, iter, center, scale
+#' @rdname INTERNAL_nipalsWrapper
 #' @keywords internal
 #'
-#' @importFrom pcaMethods pca
+#' @importFrom nipals nipals
 #' @importFrom SummarizedExperiment assay
 #'
-pcaMethods_wrapper <- function(sce, method, center, scale, transpose = FALSE) {
+nipalsWrapper <- function(sce, center, scale, transpose = FALSE) {
     mat <- assay(sce)
-    mat <- mat[rowSums(is.na(mat)) != ncol(mat), ]
-    mat <- mat[, colSums(is.na(mat)) < nrow(mat)]
-    if (scale) {
-        mat <- base::scale(mat, center = center, scale = TRUE)
-        center <- FALSE
+    dimMat <- dim(mat)
+    mat <- mat[rowSums(is.finite(mat)) > 2, colSums(is.finite(mat)) > 2]
+    if (!identical(dim(mat), dimMat)){
+        warning("Some variable(s) with less than 3 observations were removed")
     }
+
     if (transpose) {
         mat <- t(mat)
     }
-    pca <- pcaMethods::pca(mat,
-        method = method,
-        center = center
+    pca <- nipals::nipals(mat,
+        center = center,
+        ncomp = 6,
+        scale = scale
     )
     pca
 }
@@ -434,6 +434,8 @@ pcaMethods_wrapper <- function(sce, method, center, scale, transpose = FALSE) {
 #' @param df a data.frame that contains the PCA results and the color column
 #' @param color_name a character string that contains the name of the color column
 #' @param pca_result a pcaRes object that contains the PCA results
+#' @param x_component a principal component to show on x axis
+#' @param y_component a principal component to show on y axis
 #'
 #' @return a plotly object
 #' @rdname INTERNAL_pca_plotly
@@ -444,7 +446,7 @@ pcaMethods_wrapper <- function(sce, method, center, scale, transpose = FALSE) {
 #' @importFrom stats as.formula
 #' @importFrom viridisLite viridis
 #'
-pca_plotly <- function(df, pca_result, color_name, show_legend) {
+pca_plotly <- function(df, pca_result, color_name, show_legend, x_component, y_component) {
     stopifnot(is.data.frame(df))
     if (color_name == "NULL") {
         colorFormula <- NULL
@@ -477,8 +479,8 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
     }
     plotly_args <- list(
         data = df,
-        x = ~PC1,
-        y = ~PC2,
+        x = df[[x_component]],
+        y = df[[y_component]],
         text = text,
         type = "scatter",
         mode = "markers",
@@ -495,13 +497,13 @@ pca_plotly <- function(df, pca_result, color_name, show_legend) {
     plotly <- do.call(plot_ly, plotly_args) %>%
         layout(
             xaxis = list(title = paste(
-                "PC1",
-                round(pca_result@R2[1] * 100, 2),
+                x_component,
+                round(pca_result$R2[as.integer(strsplit(x_component,"PC")[[1]][2])] * 100, 2),
                 "% of the variance"
             )),
             yaxis = list(title = paste(
-                "PC2",
-                round(pca_result@R2[2] * 100, 2),
+                y_component,
+                round(pca_result$R2[as.integer(strsplit(y_component,"PC")[[1]][2])] * 100, 2),
                 "% of the variance"
             )),
             showlegend = show_legend,

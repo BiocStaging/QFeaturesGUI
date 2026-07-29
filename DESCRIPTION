@@ -7,7 +7,7 @@ Authors@R:
     person(given =  "Laurent", family = "Gatto", email = "laurent.gatto@uclouvain.be", comment = c(ORCID = "0000-0002-1520-2268"), role = c("ctb")),
     person("e-OMIX", role = c("fnd")))
 Description: "QFeaturesGUI is a suite of shiny apps that serve as graphical interfaces for the QFeatures package. Currently, the package contains the following shiny apps: 'importQFeatures'."
-biocViews: Software, ShinyApps, GUI, Proteomics, SingleCell, DataImport, PreProcessing
+biocViews: Software, ShinyApps, GUI, Proteomics, SingleCell, DataImport, Preprocessing
 URL: https://rformassspectrometry.github.io/QFeaturesGUI/, https://github.com/rformassspectrometry/QFeaturesGUI
 BugReports: https://github.com/rformassspectrometry/QFeaturesGUI/issues
 License: MIT + file LICENSE
@@ -24,7 +24,6 @@ Imports:
     utils,
     htmltools,
     impute,
-    pcaMethods,
     plotly,
     MultiAssayExperiment,
     RColorBrewer,
@@ -41,9 +40,10 @@ Imports:
     dplyr,
     matrixStats,
     MsCoreUtils,
-    waiter
+    waiter,
+    nipals
 Depends:
-    R (>= 4.3.0)
+    R (>= 4.5.0)
 Suggests: 
     knitr,
     BiocStyle,
