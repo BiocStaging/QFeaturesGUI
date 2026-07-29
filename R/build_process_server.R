@@ -128,8 +128,8 @@ build_process_server <- function(qfeatures, initial_sets, initial_steps, has_qfe
                 title = "Load a QFeatures object",
                 shiny::p(
                     "processQFeatures was started without a QFeatures object.",
-                    "Upload an .rds file containing one, then choose which",
-                    "sets should be used as the initial sets."
+                    "Upload an .rds file and choose initial sets, or start",
+                    "with the bundled demo."
                 ),
                 shiny::fileInput(
                     "startup_qfeatures_rds",
@@ -144,12 +144,60 @@ build_process_server <- function(qfeatures, initial_sets, initial_steps, has_qfe
                 footer = shiny::tagList(
                     shiny::modalButton("Cancel"),
                     shiny::actionButton(
+                        "startup_use_demo_qfeatures",
+                        "Use demo QFeatures",
+                        class = "btn-default"
+                    ),
+                    shiny::actionButton(
                         "startup_load_qfeatures",
                         "Load QFeatures",
                         class = "btn-primary"
                     )
                 )
             ))
+        }
+
+        load_startup_qfeatures <- function(uploaded, selected_sets, workflow_steps) {
+            initial_idx <- tryCatch(
+                normalise_initial_sets(uploaded, selected_sets),
+                error = function(e) e
+            )
+            if (inherits(initial_idx, "error")) {
+                upload_message(conditionMessage(initial_idx))
+                return(invisible(NULL))
+            }
+
+            if (is.null(workflow_steps)) {
+                workflow_steps <- initial_steps
+            }
+
+            .qf$qfeatures <- format_qfeatures(uploaded, initial_idx)
+            global_rv$workflow_config <- workflow_steps
+            global_rv$code_lines <- list()
+            shiny::removeModal()
+
+            n_sets <- length(initial_idx)
+            n_steps <- length(workflow_steps)
+            shinyalert(
+                title = "QFeatures loaded",
+                text = paste0(
+                    "Loaded QFeatures with ", n_sets,
+                    " initial set", if (n_sets != 1) "s" else "", ".",
+                    if (n_steps > 0) {
+                        paste0(
+                            "\nWorkflow pre-configured with ", n_steps,
+                            " step", if (n_steps != 1) "s" else "", "."
+                        )
+                    } else {
+                        ""
+                    }
+                ),
+                closeOnClickOutside = TRUE,
+                type = "success",
+                confirmButtonCol = "#3c8dbc"
+            )
+
+            invisible(NULL)
         }
 
         shiny::observeEvent(input$startup_qfeatures_rds,
@@ -189,46 +237,44 @@ build_process_server <- function(qfeatures, initial_sets, initial_steps, has_qfe
                     return(invisible(NULL))
                 }
 
-                selected_sets <- input$startup_initial_sets
-                initial_idx <- tryCatch(
-                    normalise_initial_sets(uploaded, selected_sets),
-                    error = function(e) e
-                )
-                if (inherits(initial_idx, "error")) {
-                    upload_message(conditionMessage(initial_idx))
-                    return(invisible(NULL))
-                }
-
                 workflow_steps <- input[["workflow_config-workflow_list"]]
-                if (is.null(workflow_steps)) {
-                    workflow_steps <- initial_steps
-                }
-
-                .qf$qfeatures <- format_qfeatures(uploaded, initial_idx)
-                global_rv$workflow_config <- workflow_steps
-                global_rv$code_lines <- list()
-                shiny::removeModal()
-
-                n_sets <- length(initial_idx)
-                n_steps <- length(workflow_steps)
-                shinyalert(
-                    title = "QFeatures loaded",
-                    text = paste0(
-                        "Loaded QFeatures with ", n_sets,
-                        " initial set", if (n_sets != 1) "s" else "", ".",
-                        if (n_steps > 0) {
-                            paste0(
-                                "\nWorkflow pre-configured with ", n_steps,
-                                " step", if (n_steps != 1) "s" else "", "."
-                            )
-                        } else {
-                            ""
-                        }
-                    ),
-                    closeOnClickOutside = TRUE,
-                    type = "success",
-                    confirmButtonCol = "#3c8dbc"
+                load_startup_qfeatures(
+                    uploaded,
+                    input$startup_initial_sets,
+                    workflow_steps
                 )
+            },
+            ignoreInit = TRUE
+        )
+
+        shiny::observeEvent(input$startup_use_demo_qfeatures,
+            {
+                uploaded_qfeatures(NULL)
+                upload_message(NULL)
+                startup_reading(TRUE)
+                workflow_steps <- input[["workflow_config-workflow_list"]]
+
+                session$onFlushed(function() {
+                    demo_qfeatures <- tryCatch(
+                        demo_process_qfeatures(),
+                        error = function(e) e
+                    )
+                    startup_reading(FALSE)
+                    if (inherits(demo_qfeatures, "error")) {
+                        upload_message(paste(
+                            "Could not create demo QFeatures object:",
+                            conditionMessage(demo_qfeatures)
+                        ))
+                        return(invisible(NULL))
+                    }
+
+                    uploaded_qfeatures(demo_qfeatures)
+                    load_startup_qfeatures(
+                        demo_qfeatures,
+                        names(demo_qfeatures),
+                        workflow_steps
+                    )
+                }, once = TRUE)
             },
             ignoreInit = TRUE
         )

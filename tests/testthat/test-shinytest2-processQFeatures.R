@@ -161,6 +161,29 @@ run_filtering_module_export <- function(qfeatures, type, condition_specs) {
     exported
 }
 
+test_that("{shinytest2}: processQFeatures demo startup loads bundled QFeatures", {
+    testthat::skip_on_cran()
+
+    appObject <- QFeaturesGUI::processQFeatures(prefilledSteps = character())
+    app <- AppDriver$new(
+        appObject,
+        name = "processQFeatures_demo_startup",
+        height = 900,
+        width = 1200
+    )
+    on.exit(app$stop(), add = TRUE)
+
+    app$wait_for_idle()
+    app$click("startup_use_demo_qfeatures")
+    app$wait_for_idle(timeout = 30000)
+
+    logs <- app$get_logs()
+    testthat::expect_false(any(grepl(
+        "Can't access reactive value|Error in input",
+        logs$message
+    )))
+})
+
 test_that("{shinytest2} recording: processQFeatures", {
     testthat::skip_on_cran()
 

@@ -45,25 +45,10 @@
 #'
 #' @examples
 #'
-#' # the example should be launched with `ask = FALSE`
-#'
-#' library(QFeatures)
 #' library(QFeaturesGUI)
 #'
-#' data("sampleTable")
-#' data("inputTable")
 #'
-#' qfeatures <- readQFeatures(
-#'     inputTable,
-#'     colData = sampleTable,
-#'     runCol = "Raw.file"
-#' )
-#'
-#' app <- processQFeatures(
-#'     qfeatures,
-#'     initialSets = seq_along(qfeatures),
-#'     maxSize = 100
-#' )
+#' app <- processQFeatures()
 #'
 #' if (interactive()) {
 #'     shiny::runApp(app)
