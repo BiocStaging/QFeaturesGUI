@@ -299,7 +299,7 @@ codeGeneratorImpute <- function(method, step_number) {
     }
 
     default_args <- specs[[method]]$call_args
-    arg_lines <- c(paste0("\t\tmethod = '", method, "'"))
+    arg_lines <- paste0("\t\tmethod = '", method, "'")
     for (arg_name in names(default_args)) {
         arg_value <- default_args[[arg_name]]
         if (is.character(arg_value)) {
