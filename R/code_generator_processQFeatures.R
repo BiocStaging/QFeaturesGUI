@@ -56,9 +56,9 @@ step%s_setNames<- c(%s)\n",
 check_for_missing_set <- function(qf, step_number) {
     vec <- names(qf)
     indice_to_remove <- c()
-    initial_setNames <- vec[grep(pattern = paste0("QFeaturesGUI#", step_number - 1), vec)]
+    initial_setNames <- vec[grep(pattern = paste0("QFeaturesGUI#", step_number - 1), vec, fixed = TRUE)]
     initial <- gsub("_\\(QFeaturesGUI#[0-9]+\\)_*[a-z]*_*[a-z]*_*[0-9]*", "", initial_setNames)
-    currentStep_setNames <- vec[grep(pattern = paste0("QFeaturesGUI#", step_number), vec)]
+    currentStep_setNames <- vec[grep(pattern = paste0("QFeaturesGUI#", step_number), vec, fixed = TRUE)]
     current <- gsub("_\\(QFeaturesGUI#[0-9]+\\)_*[a-z]*_*[a-z]*_*[0-9]*", "", currentStep_setNames)
     if (length(initial) != length(current)) {
         for (i in seq_along(initial)) {
