@@ -34,8 +34,7 @@ interface_module_join_tab <- function(id) {
             ),
             tooltipText = paste(
                 "Join assays and write the processed set to the QFeatures object.",
-                "This is needed to proceed to the next steps.",
-                sep = " "
+                "This is needed to proceed to the next steps."
             ),
             placement = "top"
         )

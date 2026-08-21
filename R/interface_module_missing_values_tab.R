@@ -64,8 +64,7 @@ interface_module_missing_values_tab <- function(id, type) {
             ),
             paste(
                 "Write the processed sets to the QFeatures object.",
-                "This is needed to proceed to the next steps.",
-                sep = " "
+                "This is needed to proceed to the next steps."
             ),
             placement = "top"
         )
