@@ -359,7 +359,7 @@ codeGeneratorFiltering <- function(qf, condition, type, step_number) {
             condition_used <- "se <- se"
         } else {
             final <- "se <- se["
-            for (i in 1:length(condition)) {
+            for (i in seq_along(condition)) {
                 annotation <- as_r_string_literal(condition[[i]]$annotation)
                 if (condition[[i]]$annotation == ".qfeaturesgui_rowname") {
                     if (is_missingness_filter_operator(condition[[i]]$operator)) {
@@ -426,7 +426,7 @@ for(i in 1:length(step%s_setNames)){
             condition_used <- "se <- se"
         } else {
             final <- "se <- se[,"
-            for (i in 1:length(condition)) {
+            for (i in seq_along(condition)) {
                 annotation <- as_r_string_literal(condition[[i]]$annotation)
                 if (condition[[i]]$annotation == ".qfeaturesgui_rowname") {
                     if (is_missingness_filter_operator(condition[[i]]$operator)) {
