@@ -81,17 +81,10 @@ box_readqfeatures_server <- function(id, input_table, sample_table) {
                     if (input$singlecell) {
                         qfeatures <- setQFeaturesType(qfeatures, type = "scp")
                     }
-                    # The following code is a workaround
-                    # to fix keep track of the steps in the QFeatures object
-                    # The idea is that each page will be assigned a number,
-                    # and will use the assays that have the number - 1 in the name.
-                    # And then add assays with the number of the page in the QFeatures
-                    for (i in seq_along(qfeatures)) {
-                        names(qfeatures)[i] <- paste0(
-                            names(qfeatures)[i],
-                            "_(QFeaturesGUI#0)_initial_import"
-                        )
-                    }
+                    names(qfeatures) <- paste0(
+                        names(qfeatures),
+                        "_(QFeaturesGUI#0)_initial_import"
+                    )
                     shinyjs::show("selected_assay_preview_box")
                     qfeatures
                 }

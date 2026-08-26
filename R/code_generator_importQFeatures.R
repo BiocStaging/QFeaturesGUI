@@ -61,7 +61,7 @@ code_generator_read_qfeatures <- function(input_table, sample_table, qfeatures, 
 }
 
 code_generator_read_table <- function(id, arg_as_param, file = NULL, sep = NULL, dec = NULL, skip = NULL, stringAsFactors = NULL, comment = NULL) {
-    if (arg_as_param == FALSE) {
+    if (!arg_as_param) {
         codeLines <- sprintf(
             "# insert the path to your '%s' data table here\n#%s_table <- myPath\n\n%s_table <- read.table(%s,\n\tsep = '%s',\n\tdec = '%s',\n\tskip = '%s',\n\tstringsAsFactors = %s,\n\tcomment.char = '%s',\n\theader = TRUE,\n\trow.names = 1\n)\n",
             id,
@@ -76,13 +76,11 @@ code_generator_read_table <- function(id, arg_as_param, file = NULL, sep = NULL,
         )
     } else {
         if (id == "input") {
-            codeLines <- sprintf(
+            codeLines <- 
                 "# Replace dataFrame1 with the value passed as assayData arg\n\ninput_table <- dataFrame1\n"
-            )
         } else {
-            codeLines <- sprintf(
+            codeLines <- 
                 "# Replace dataFrame2 with the value passed as colData arg\n\nsample_table <- dataFrame2\n"
-            )
         }
     }
     codeLines

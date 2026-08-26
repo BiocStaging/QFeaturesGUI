@@ -56,9 +56,9 @@ step%s_setNames<- c(%s)\n",
 check_for_missing_set <- function(qf, step_number) {
     vec <- names(qf)
     indice_to_remove <- c()
-    initial_setNames <- vec[grep(pattern = paste0("QFeaturesGUI#", step_number - 1), vec)]
+    initial_setNames <- vec[grep(pattern = paste0("QFeaturesGUI#", step_number - 1), vec, fixed = TRUE)]
     initial <- gsub("_\\(QFeaturesGUI#[0-9]+\\)_*[a-z]*_*[a-z]*_*[0-9]*", "", initial_setNames)
-    currentStep_setNames <- vec[grep(pattern = paste0("QFeaturesGUI#", step_number), vec)]
+    currentStep_setNames <- vec[grep(pattern = paste0("QFeaturesGUI#", step_number), vec, fixed = TRUE)]
     current <- gsub("_\\(QFeaturesGUI#[0-9]+\\)_*[a-z]*_*[a-z]*_*[0-9]*", "", currentStep_setNames)
     if (length(initial) != length(current)) {
         initial_setNames <- initial_setNames[initial!=setdiff(initial, current)]
@@ -290,11 +290,14 @@ for(i in seq_along(step%s_setNames)){
 codeGeneratorImpute <- function(method, step_number) {
     specs <- imputation_method_specs()
     if (!(method %in% names(specs))) {
-        stop("Unknown imputation method: ", method, call. = FALSE)
+        stop("Unknown imputation method: ", method,
+            ". Use one of the available methods: ",
+            names(specs),
+            call. = FALSE)
     }
 
     default_args <- specs[[method]]$call_args
-    arg_lines <- c(paste0("\t\tmethod = '", method, "'"))
+    arg_lines <- paste0("\t\tmethod = '", method, "'")
     for (arg_name in names(default_args)) {
         arg_value <- default_args[[arg_name]]
         if (is.character(arg_value)) {
@@ -354,7 +357,7 @@ codeGeneratorFiltering <- function(qf, condition, type, step_number) {
             condition_used <- "se <- se"
         } else {
             final <- "se <- se["
-            for (i in 1:length(condition)) {
+            for (i in seq_along(condition)) {
                 annotation <- as_r_string_literal(condition[[i]]$annotation)
                 if (condition[[i]]$annotation == ".qfeaturesgui_rowname") {
                     if (is_missingness_filter_operator(condition[[i]]$operator)) {
@@ -421,7 +424,7 @@ for(i in 1:length(step%s_setNames)){
             condition_used <- "se <- se"
         } else {
             final <- "se <- se[,"
-            for (i in 1:length(condition)) {
+            for (i in seq_along(condition)) {
                 annotation <- as_r_string_literal(condition[[i]]$annotation)
                 if (condition[[i]]$annotation == ".qfeaturesgui_rowname") {
                     if (is_missingness_filter_operator(condition[[i]]$operator)) {
