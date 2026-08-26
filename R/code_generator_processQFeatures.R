@@ -146,7 +146,7 @@ codeGeneratorNA <- function(qf, pNA, type, step_number) {
             "####################################
 ###### Missing value features ######
 ####################################
-for (i in 1:length(step%s_setNames)){
+for (i in seq_along(step%s_setNames)){
 \tqf[[step%s_setNames[i]]] <- filterNA(
 \t\tobject = qf[[step%s_setNames[i]]],
 \t\tpNA = %s
@@ -165,7 +165,7 @@ for (i in 1:length(step%s_setNames)){
             "####################################
 ###### Missing value samples #######
 ####################################
-for(i in 1:length(step%s_setNames)){
+for(i in seq_along(step%s_setNames)){
     tableNA <- nNA(
         object = qf,
         i = step%s_setNames[i]
@@ -202,7 +202,7 @@ codeGeneratorNormalisation <- function(method, step_number) {
         "####################################
 ########## Normalisation ###########
 ####################################
-for(i in 1:length(step%s_setNames)){
+for(i in seq_along(step%s_setNames)){
 \tqf[[step%s_setNames[i]]] <- normalize(
 \t\tobject = qf[[step%s_setNames[i]]],
 \t\tmethod = '%s'
@@ -231,7 +231,7 @@ codeGeneratorZeroToNA <- function(step_number) {
         "####################################
 ############ Zero to NA ############
 ####################################
-for(i in 1:length(step%s_setNames)){
+for(i in seq_along(step%s_setNames)){
 \tqf[[step%s_setNames[i]]] <- zeroIsNA(
 \t\tobject = qf[[step%s_setNames[i]]]
 \t)
@@ -260,7 +260,7 @@ codeGeneratorLogTransform <- function(base, pseudocount, step_number) {
         "####################################
 ########## Log Transform ###########
 ####################################
-for(i in 1:length(step%s_setNames)){
+for(i in seq_along(step%s_setNames)){
 \tqf[[step%s_setNames[i]]] <- logTransform(
 \t\tobject = qf[[step%s_setNames[i]]],
 \t\tbase = %s,
@@ -308,7 +308,7 @@ codeGeneratorImpute <- function(method, step_number) {
         "####################################
 ############ Imputation ############
 ####################################
-for(i in 1:length(step%s_setNames)){
+for(i in seq_along(step%s_setNames)){
 \tqf[[step%s_setNames[i]]] <- impute(
 \t\tobject = qf[[step%s_setNames[i]]],
 %s
@@ -470,7 +470,7 @@ for(i in 1:length(step%s_setNames)){
             "####################################
 ######## samples filtering #########
 ####################################
-for(i in 1:length(step%s_setNames)){
+for(i in seq_along(step%s_setNames)){
 \tse <- getWithColData(qf, step%s_setNames[i])
 \t%s
 \tqf[[step%s_setNames[i]]] <- se
