@@ -111,19 +111,11 @@ server_module_summary_tab <- function(id) {
                                 paste0("# Generated on: ", Sys.time()),
                                 "",
                                 "####################################\n######### Package loading ##########\n####################################\nlibrary(QFeatures)\nlibrary(MsCoreUtils)\n",
-                                "####################################\n########## Load dataset ############\n####################################\n## Replace 'myDataset' with the path towards your initial Qfeatures .rds file.\n## Or directly assign your initial QFeatures object to qf.\nqf <- readRDS('myDataset') \n"
+                                "####################################\n########## Load dataset ############\n####################################\n## Replace 'myDataset' with the path towards your initial Qfeatures .rds file.\n## Or directly assign your initial QFeatures object to qf.\nqf <- readRDS('myDataset') \n",
+                                unlist(global_rv$code_lines)
                             ),
                             r_file
                         )
-                        for (i in global_rv$code_lines) {
-                            write(
-                                c(
-                                    i
-                                ),
-                                file = r_file,
-                                append = TRUE
-                            )
-                        }
                         utils::zip(
                             zipfile = file,
                             files = c(rds_file, SI_file, r_file),
