@@ -110,7 +110,7 @@ server_module_summary_tab <- function(id) {
                                 "# Reproducible R script",
                                 paste0("# Generated on: ", Sys.time()),
                                 "",
-                                "####################################\n######### Package loading ##########\n####################################\nlibrary(QFeatures)\n",
+                                "####################################\n######### Package loading ##########\n####################################\nlibrary(QFeatures)\nlibrary(MsCoreUtils)\n",
                                 "####################################\n########## Load dataset ############\n####################################\n## Replace 'myDataset' with the path towards your initial Qfeatures .rds file.\n## Or directly assign your initial QFeatures object to qf.\nqf <- readRDS('myDataset') \n"
                             ),
                             r_file
