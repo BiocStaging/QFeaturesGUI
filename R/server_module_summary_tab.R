@@ -117,9 +117,7 @@ server_module_summary_tab <- function(id) {
                         )
                         for (i in global_rv$code_lines) {
                             write(
-                                c(
-                                    i
-                                ),
+                                i,
                                 file = r_file,
                                 append = TRUE
                             )
