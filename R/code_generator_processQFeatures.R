@@ -61,12 +61,7 @@ check_for_missing_set <- function(qf, step_number) {
     currentStep_setNames <- vec[grep(pattern = paste0("QFeaturesGUI#", step_number), vec)]
     current <- gsub("_\\(QFeaturesGUI#[0-9]+\\)_*[a-z]*_*[a-z]*_*[0-9]*", "", currentStep_setNames)
     if (length(initial) != length(current)) {
-        for (i in seq_along(initial)) {
-            if (!(initial[i] %in% current)) {
-                indice_to_remove <- append(indice_to_remove, i)
-            }
-        }
-        initial_setNames <- initial_setNames[-indice_to_remove]
+        initial_setNames <- initial_setNames[initial!=setdiff(initial, current)]
         initial_setNames <- remove_QFeaturesGUI(initial_setNames)
         codeLines <- sprintf(
             "##After filtering steps one or more set has been deleted.\nstep%s_setNames <- c(%s)\n",
