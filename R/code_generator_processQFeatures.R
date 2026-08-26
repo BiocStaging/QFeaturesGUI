@@ -295,7 +295,10 @@ for(i in 1:length(step%s_setNames)){
 codeGeneratorImpute <- function(method, step_number) {
     specs <- imputation_method_specs()
     if (!(method %in% names(specs))) {
-        stop("Unknown imputation method: ", method, call. = FALSE)
+        stop("Unknown imputation method: ", method,
+            ". Use one of the available methods: ",
+            names(specs),
+            call. = FALSE)
     }
 
     default_args <- specs[[method]]$call_args

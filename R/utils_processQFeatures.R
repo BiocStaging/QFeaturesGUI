@@ -477,28 +477,26 @@ nipalsWrapper <- function(sce, center, scale, transpose = FALSE) {
 #' @keywords internal
 #'
 #' @importFrom plotly plot_ly layout %>% hide_colorbar config
-#' @importFrom RColorBrewer brewer.pal
 #' @importFrom stats as.formula
-#' @importFrom viridisLite viridis
 #'
 pca_plotly <- function(df, pca_result, color_name, show_legend, x_component, y_component) {
     stopifnot(is.data.frame(df))
     if (color_name == "NULL") {
         colorFormula <- NULL
         text <- row.names(df)
-        colorPalette <- RColorBrewer::brewer.pal(3, "Set1")[1]
+        colorPalette <- grDevices::palette.colors(3, "Set 1")[1]
         hoverText <- "%{text}<extra></extra>"
         customizeData <- NULL
     } else {
         colorFormula <- as.formula(paste0("~", color_name))
         text <- ~.qfeaturesgui_row_id
         colorPalette <- if (is.numeric(df[[color_name]])) {
-            viridisLite::viridis(10)
+            grDevices::hcl.colors(10, "Viridis")
         } else {
             n_colors <- max(1L, length(unique(df[[color_name]])))
-            base_palette <- RColorBrewer::brewer.pal(
+            base_palette <- grDevices::palette.colors(
                 min(max(3L, n_colors), 9L),
-                "Set1"
+                "Set 1"
             )
             if (n_colors > length(base_palette)) {
                 grDevices::colorRampPalette(base_palette)(n_colors)
@@ -772,7 +770,10 @@ available_imputation_methods <- function() {
 assert_imputation_method_available <- function(method) {
     specs <- imputation_method_specs()
     if (!(method %in% names(specs))) {
-        stop("Unknown imputation method: ", method, call. = FALSE)
+        stop("Unknown imputation method: ", method, 
+            ". Use one of the available methods: ",
+            names(specs),
+            call. = FALSE)
     }
 
     required_package <- specs[[method]]$package
@@ -888,8 +889,9 @@ density_by_sample_plotly <- function(qfeatures, color = NULL, title = "Density b
     if (length(group_levels) <= 1L) {
         ridge_colors <- setNames("steelblue", group_levels)
     } else {
-        base_palette <- suppressWarnings(
-            RColorBrewer::brewer.pal(min(8L, length(group_levels)), "Set2")
+        base_palette <- grDevices::palette.colors(
+            min(8L, length(group_levels)),
+            "Set 2"
         )
         if (length(group_levels) > length(base_palette)) {
             base_palette <- grDevices::colorRampPalette(base_palette)(length(group_levels))
