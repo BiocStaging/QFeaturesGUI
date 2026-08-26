@@ -2,158 +2,193 @@
 
 export(importQFeatures)
 export(processQFeatures)
-importFrom(DT,dataTableOutput)
-importFrom(DT,datatable)
-importFrom(DT,renderDataTable)
-importFrom(MsCoreUtils,medianPolish)
-importFrom(MsCoreUtils,robustSummary)
-importFrom(MultiAssayExperiment,ExperimentList)
-importFrom(MultiAssayExperiment,MultiAssayExperiment)
-importFrom(MultiAssayExperiment,getWithColData)
-importFrom(QFeatures,QFeatures)
-importFrom(QFeatures,addAssayLink)
-importFrom(QFeatures,aggregateFeatures)
-importFrom(QFeatures,createPrecursorId)
-importFrom(QFeatures,filterFeatures)
-importFrom(QFeatures,filterNA)
-importFrom(QFeatures,getQFeaturesType)
-importFrom(QFeatures,joinAssays)
-importFrom(QFeatures,logTransform)
-importFrom(QFeatures,nNA)
-importFrom(QFeatures,normalize)
-importFrom(QFeatures,rbindRowData)
-importFrom(QFeatures,readQFeatures)
-importFrom(QFeatures,rowDataNames)
-importFrom(QFeatures,setQFeaturesType)
-importFrom(QFeatures,zeroIsNA)
-importFrom(RColorBrewer,brewer.pal)
-importFrom(SingleCellExperiment,SingleCellExperiment)
-importFrom(SingleCellExperiment,colData)
-importFrom(SummarizedExperiment,SummarizedExperiment)
-importFrom(SummarizedExperiment,assay)
-importFrom(SummarizedExperiment,colData)
-importFrom(SummarizedExperiment,rowData)
+importFrom(DT,
+  dataTableOutput,
+  datatable,
+  renderDataTable
+)
+importFrom(MsCoreUtils,
+  medianPolish,
+  robustSummary
+)
+importFrom(MultiAssayExperiment,
+  ExperimentList,
+  MultiAssayExperiment,
+  getWithColData
+)
+importFrom(QFeatures,
+  QFeatures,
+  addAssayLink,
+  aggregateFeatures,
+  createPrecursorId,
+  filterFeatures,
+  filterNA,
+  getQFeaturesType,
+  joinAssays,
+  logTransform,
+  nNA,
+  normalize,
+  rbindRowData,
+  readQFeatures,
+  rowDataNames,
+  setQFeaturesType,
+  zeroIsNA
+)
+importFrom(SingleCellExperiment,
+  SingleCellExperiment,
+  colData
+)
+importFrom(SummarizedExperiment,
+  SummarizedExperiment,
+  assay,
+  colData,
+  rowData
+)
 importFrom(dplyr,mutate)
-importFrom(ggplot2,aes)
-importFrom(ggplot2,annotate)
-importFrom(ggplot2,geom_boxplot)
-importFrom(ggplot2,geom_histogram)
-importFrom(ggplot2,geom_violin)
-importFrom(ggplot2,geom_vline)
-importFrom(ggplot2,ggplot)
-importFrom(ggplot2,scale_x_continuous)
-importFrom(htmltools,HTML)
-importFrom(htmltools,br)
-importFrom(htmltools,div)
-importFrom(htmltools,h2)
-importFrom(htmltools,h3)
-importFrom(htmltools,includeCSS)
-importFrom(htmltools,p)
-importFrom(htmltools,span)
-importFrom(htmltools,tagList)
-importFrom(htmltools,tags)
+importFrom(ggplot2,
+  aes,
+  annotate,
+  geom_boxplot,
+  geom_histogram,
+  geom_violin,
+  geom_vline,
+  ggplot,
+  scale_x_continuous
+)
+importFrom(htmltools,
+  HTML,
+  br,
+  div,
+  h2,
+  h3,
+  includeCSS,
+  p,
+  span,
+  tagList,
+  tags
+)
 importFrom(matrixStats,colMedians)
-importFrom(methods,as)
-importFrom(methods,is)
+importFrom(methods,
+  as,
+  is
+)
 importFrom(nipals,nipals)
-importFrom(plotly,"%>%")
-importFrom(plotly,add_annotations)
-importFrom(plotly,add_histogram)
-importFrom(plotly,add_trace)
-importFrom(plotly,config)
-importFrom(plotly,ggplotly)
-importFrom(plotly,hide_colorbar)
-importFrom(plotly,layout)
-importFrom(plotly,plot_ly)
-importFrom(plotly,plotlyOutput)
-importFrom(plotly,plotly_build)
-importFrom(plotly,renderPlotly)
+importFrom(plotly,
+  "%>%",
+  add_annotations,
+  add_histogram,
+  add_trace,
+  config,
+  ggplotly,
+  hide_colorbar,
+  layout,
+  plot_ly,
+  plotlyOutput,
+  plotly_build,
+  renderPlotly
+)
 importFrom(rmarkdown,render)
-importFrom(shiny,NS)
-importFrom(shiny,actionButton)
-importFrom(shiny,addResourcePath)
-importFrom(shiny,checkboxInput)
-importFrom(shiny,column)
-importFrom(shiny,downloadButton)
-importFrom(shiny,downloadHandler)
-importFrom(shiny,eventReactive)
-importFrom(shiny,fileInput)
-importFrom(shiny,fluidRow)
-importFrom(shiny,icon)
-importFrom(shiny,invalidateLater)
-importFrom(shiny,is.reactive)
-importFrom(shiny,isolate)
-importFrom(shiny,modalButton)
-importFrom(shiny,modalDialog)
-importFrom(shiny,moduleServer)
-importFrom(shiny,numericInput)
-importFrom(shiny,observe)
-importFrom(shiny,observeEvent)
-importFrom(shiny,onStop)
-importFrom(shiny,outputOptions)
-importFrom(shiny,p)
-importFrom(shiny,plotOutput)
-importFrom(shiny,reactive)
-importFrom(shiny,reactiveVal)
-importFrom(shiny,reactiveValues)
-importFrom(shiny,reactiveValuesToList)
-importFrom(shiny,removeModal)
-importFrom(shiny,renderText)
-importFrom(shiny,renderUI)
-importFrom(shiny,req)
-importFrom(shiny,runApp)
-importFrom(shiny,selectInput)
-importFrom(shiny,selectizeInput)
-importFrom(shiny,shinyApp)
-importFrom(shiny,showModal)
-importFrom(shiny,showNotification)
-importFrom(shiny,tagAppendAttributes)
-importFrom(shiny,tagList)
-importFrom(shiny,tags)
-importFrom(shiny,textInput)
-importFrom(shiny,textOutput)
-importFrom(shiny,uiOutput)
-importFrom(shiny,updateSelectInput)
-importFrom(shiny,updateSelectizeInput)
-importFrom(shiny,updateTextInput)
-importFrom(shiny,verbatimTextOutput)
-importFrom(shinyFeedback,feedbackDanger)
-importFrom(shinyFeedback,useShinyFeedback)
-importFrom(shinyalert,shinyalert)
-importFrom(shinyalert,useShinyalert)
-importFrom(shinydashboard,dashboardBody)
-importFrom(shinydashboard,dropdownMenu)
-importFrom(shinydashboard,dropdownMenuOutput)
-importFrom(shinydashboard,infoBox)
-importFrom(shinydashboard,infoBoxOutput)
-importFrom(shinydashboard,menuItem)
-importFrom(shinydashboard,menuItemOutput)
-importFrom(shinydashboard,menuSubItem)
-importFrom(shinydashboard,renderInfoBox)
-importFrom(shinydashboard,renderMenu)
-importFrom(shinydashboard,sidebarMenu)
-importFrom(shinydashboard,tabItem)
-importFrom(shinydashboard,tabItems)
-importFrom(shinydashboard,updateTabItems)
-importFrom(shinydashboardPlus,box)
-importFrom(shinydashboardPlus,boxSidebar)
-importFrom(shinydashboardPlus,dashboardHeader)
-importFrom(shinydashboardPlus,dashboardPage)
-importFrom(shinydashboardPlus,dashboardSidebar)
-importFrom(shinyjs,disabled)
-importFrom(shinyjs,enable)
-importFrom(shinyjs,hidden)
-importFrom(shinyjs,show)
-importFrom(shinyjs,useShinyjs)
-importFrom(stats,as.formula)
-importFrom(stats,na.exclude)
+importFrom(shiny,
+  NS,
+  actionButton,
+  addResourcePath,
+  checkboxInput,
+  column,
+  downloadButton,
+  downloadHandler,
+  eventReactive,
+  fileInput,
+  fluidRow,
+  icon,
+  invalidateLater,
+  is.reactive,
+  isolate,
+  modalButton,
+  modalDialog,
+  moduleServer,
+  numericInput,
+  observe,
+  observeEvent,
+  onStop,
+  outputOptions,
+  p,
+  plotOutput,
+  reactive,
+  reactiveVal,
+  reactiveValues,
+  reactiveValuesToList,
+  removeModal,
+  renderText,
+  renderUI,
+  req,
+  runApp,
+  selectInput,
+  selectizeInput,
+  shinyApp,
+  showModal,
+  showNotification,
+  tagAppendAttributes,
+  tagList,
+  tags,
+  textInput,
+  textOutput,
+  uiOutput,
+  updateSelectInput,
+  updateSelectizeInput,
+  updateTextInput,
+  verbatimTextOutput
+)
+importFrom(shinyFeedback,
+  feedbackDanger,
+  useShinyFeedback
+)
+importFrom(shinyalert,
+  shinyalert,
+  useShinyalert
+)
+importFrom(shinydashboard,
+  dashboardBody,
+  dropdownMenu,
+  dropdownMenuOutput,
+  infoBox,
+  infoBoxOutput,
+  menuItem,
+  menuItemOutput,
+  menuSubItem,
+  renderInfoBox,
+  renderMenu,
+  sidebarMenu,
+  tabItem,
+  tabItems,
+  updateTabItems
+)
+importFrom(shinydashboardPlus,
+  box,
+  boxSidebar,
+  dashboardHeader,
+  dashboardPage,
+  dashboardSidebar
+)
+importFrom(shinyjs,
+  disabled,
+  enable,
+  hidden,
+  show,
+  useShinyjs
+)
+importFrom(stats,
+  as.formula,
+  na.exclude
+)
 importFrom(tibble,rownames_to_column)
-importFrom(tidyr,gather)
 importFrom(tidyr,pivot_longer)
-importFrom(utils,data)
-importFrom(utils,read.table)
-importFrom(utils,zip)
-importFrom(viridisLite,viridis)
-importFrom(waiter,Waiter)
-importFrom(waiter,spin_fading_circles)
-importFrom(waiter,useWaiter)
+importFrom(utils,
+  data,
+  read.table,
+  zip
+)
+importFrom(waiter,
+  Waiter,
+  spin_fading_circles,
+  useWaiter
+)

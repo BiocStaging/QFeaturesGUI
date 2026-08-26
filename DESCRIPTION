@@ -6,7 +6,7 @@ Authors@R:
     person(given =  "Loïc", family = "Guille", email = "loic.guille@uclouvain.be", comment = c(ORCID = "0000-0002-8387-1092"), role = c("aut")),
     person(given =  "Laurent", family = "Gatto", email = "laurent.gatto@uclouvain.be", comment = c(ORCID = "0000-0002-1520-2268"), role = c("ctb")),
     person("e-OMIX", role = c("fnd")))
-Description: "QFeaturesGUI is a suite of shiny apps that serve as graphical interfaces for the QFeatures package. Currently, the package contains the following shiny apps: 'importQFeatures'."
+Description: QFeaturesGUI is a suite of shiny apps that serve as graphical interfaces for the QFeatures package. Currently, the package contains the following shiny apps: 'importQFeatures'.
 biocViews: Software, ShinyApps, GUI, Proteomics, SingleCell, DataImport, Preprocessing
 URL: https://rformassspectrometry.github.io/QFeaturesGUI/, https://github.com/rformassspectrometry/QFeaturesGUI
 BugReports: https://github.com/rformassspectrometry/QFeaturesGUI/issues
@@ -26,10 +26,8 @@ Imports:
     impute,
     plotly,
     MultiAssayExperiment,
-    RColorBrewer,
     methods,
     shinyFeedback,
-    viridisLite,
     stats,
     SingleCellExperiment,
     ggplot2,
@@ -50,7 +48,6 @@ Suggests:
     testthat (>= 3.0.0),
     shinytest2
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 8.0.0
 VignetteBuilder: knitr
 Config/testthat/edition: 3
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0

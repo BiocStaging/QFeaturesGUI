@@ -163,7 +163,7 @@ server_module_aggregation_tab <- function(id, step_number, step_rv, parent_rv) {
 #' @importFrom tibble rownames_to_column
 #' @importFrom QFeatures aggregateFeatures
 #' @importFrom stats na.exclude
-#' @importFrom tidyr gather
+#' @importFrom tidyr pivot_longer
 #'
 
 server_module_boxplot_box <- function(id, qf, qf_aggregate, aggregateBy, feature, color, showPoints) {
@@ -190,24 +190,40 @@ server_module_boxplot_box <- function(id, qf, qf_aggregate, aggregateBy, feature
                     df_qf_list[[i]] <- assay(set_qf) |>
                         as.data.frame() |>
                         rownames_to_column(var = "aggregation") |>
-                        tidyr::gather(sample, intensity, -aggregation) |>
+                        tidyr::pivot_longer(
+                            cols = -aggregation,
+                            names_to = "sample",
+                            values_to = "intensity"
+                        ) |>
                         na.exclude()
                     df_qf_aggregate_list[[i]] <- assay(set_qf_aggregate) |>
                         as.data.frame() |>
                         rownames_to_column(var = "aggregation") |>
-                        tidyr::gather(sample, intensity, -aggregation) |>
+                        tidyr::pivot_longer(
+                            cols = -aggregation,
+                            names_to = "sample",
+                            values_to = "intensity"
+                        ) |>
                         na.exclude()
                 } else {
                     df_qf_list[[i]] <- assay(set_qf) |>
                         as.data.frame() |>
                         rownames_to_column(var = "aggregation") |>
-                        tidyr::gather(sample, intensity, -aggregation) |>
+                        tidyr::pivot_longer(
+                            cols = -aggregation,
+                            names_to = "sample",
+                            values_to = "intensity"
+                        ) |>
                         mutate(condition = as.vector(colData(qf_current)[sample, selected_color])) |>
                         na.exclude()
                     df_qf_aggregate_list[[i]] <- assay(set_qf_aggregate) |>
                         as.data.frame() |>
                         rownames_to_column(var = "aggregation") |>
-                        tidyr::gather(sample, intensity, -aggregation) |>
+                        tidyr::pivot_longer(
+                            cols = -aggregation,
+                            names_to = "sample",
+                            values_to = "intensity"
+                        ) |>
                         mutate(condition = as.vector(colData(qf_aggregate_current)[sample, selected_color])) |>
                         na.exclude()
                 }
