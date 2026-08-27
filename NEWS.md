@@ -1,3 +1,9 @@
-# QFeaturesGUI 0.99.0
+# QFeaturesGUI 0.99
 
-* Initial Bioconductor submission.
+## QFeaturesGUI 0.99.1
+
+- Address review comments.
+
+## QFeaturesGUI 0.99.0
+
+- Initial Bioconductor submission.
