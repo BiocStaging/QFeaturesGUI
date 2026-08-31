@@ -1,5 +1,9 @@
 # QFeaturesGUI 0.99
 
+## QFeaturesGUI 0.99.3
+
+- Use default for argument `row.names` when using `read.table`.
+
 ## QFeaturesGUI 0.99.2
 
 - Update Description.
