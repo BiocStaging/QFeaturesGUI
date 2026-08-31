@@ -45,8 +45,7 @@ box_read_table_server <- function(id, given_table = NULL) {
                             skip = input$skip,
                             stringsAsFactors = input$stringsAsFactors,
                             comment.char = input$comment_char,
-                            header = TRUE,
-                            row.names = 1
+                            header = TRUE
                         )
                         table(new_table)
                         global_rv$code_lines[[paste0("read_", id, "_data")]] <- code_generator_read_table(

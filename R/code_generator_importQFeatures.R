@@ -63,7 +63,7 @@ code_generator_read_qfeatures <- function(input_table, sample_table, qfeatures, 
 code_generator_read_table <- function(id, arg_as_param, file = NULL, sep = NULL, dec = NULL, skip = NULL, stringAsFactors = NULL, comment = NULL) {
     if (!arg_as_param) {
         codeLines <- sprintf(
-            "# insert the path to your '%s' data table here\n#%s_table <- myPath\n\n%s_table <- read.table(%s,\n\tsep = '%s',\n\tdec = '%s',\n\tskip = '%s',\n\tstringsAsFactors = %s,\n\tcomment.char = '%s',\n\theader = TRUE,\n\trow.names = 1\n)\n",
+            "# insert the path to your '%s' data table here\n#%s_table <- myPath\n\n%s_table <- read.table(%s,\n\tsep = '%s',\n\tdec = '%s',\n\tskip = '%s',\n\tstringsAsFactors = %s,\n\tcomment.char = '%s',\n\theader = TRUE\n)\n",
             id,
             id,
             id,
